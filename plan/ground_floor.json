@@ -1,0 +1,535 @@
+{
+ "_doc": "Ground floor of main house, 1159 Diamond St. Units: metres. Origin = front-left (street, west) outer corner of the house. +x = east (right when viewed from street), +y = toward rear/pool. 'evidence' lists frames in frames/interior|exterior that support the element; 'assumed' means not visible in the video.",
+ "level": 0,
+ "floor_height": 0.0,
+ "ceiling_height": 3.0,
+ "footprint": {
+  "x": 0,
+  "y": 0,
+  "w": 11.0,
+  "d": 12.0,
+  "evidence": [
+   "generated/01_site-plan.webp",
+   "exterior/15_top-down-site-plan-night.jpg"
+  ],
+  "confidence": "medium"
+ },
+ "wall_thickness": {
+  "exterior": 0.3,
+  "interior": 0.12
+ },
+ "rooms": [
+  {
+   "id": "open_plan",
+   "name": "",
+   "x": 4.0,
+   "y": 0.0,
+   "w": 7.0,
+   "d": 12.0,
+   "evidence": [
+    "interior/04",
+    "interior/08"
+   ],
+   "confidence": "medium",
+   "label": false
+  },
+  {
+   "id": "porch",
+   "name": "Covered Entry",
+   "x": 4.0,
+   "y": -1.8,
+   "w": 2.8,
+   "d": 1.8,
+   "exterior": true,
+   "evidence": [
+    "interior/03",
+    "exterior/02",
+    "exterior/03"
+   ],
+   "confidence": "high"
+  },
+  {
+   "id": "foyer",
+   "name": "Foyer",
+   "x": 4.0,
+   "y": 0.0,
+   "w": 2.6,
+   "d": 2.6,
+   "evidence": [
+    "interior/03"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "stair",
+   "name": "Floating Stair + Pebble Atrium",
+   "x": 4.2,
+   "y": 2.6,
+   "w": 1.3,
+   "d": 5.8,
+   "evidence": [
+    "interior/08",
+    "interior/11",
+    "interior/10",
+    "exterior/15 (bulkhead above)"
+   ],
+   "confidence": "high"
+  },
+  {
+   "id": "dining",
+   "name": "Dining",
+   "x": 6.6,
+   "y": 0.0,
+   "w": 4.4,
+   "d": 4.4,
+   "evidence": [
+    "interior/08",
+    "interior/09"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "kitchen",
+   "name": "Kitchen",
+   "x": 5.6,
+   "y": 4.4,
+   "w": 5.4,
+   "d": 4.4,
+   "evidence": [
+    "interior/04",
+    "interior/05",
+    "interior/06",
+    "interior/07"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "great",
+   "name": "Great Room",
+   "x": 4.0,
+   "y": 8.8,
+   "w": 7.0,
+   "d": 3.2,
+   "evidence": [
+    "interior/01",
+    "interior/02",
+    "interior/04"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "living",
+   "name": "Living Room",
+   "x": 0.0,
+   "y": 6.2,
+   "w": 4.0,
+   "d": 5.8,
+   "evidence": [
+    "interior/12",
+    "interior/13"
+   ],
+   "confidence": "low"
+  },
+  {
+   "id": "powder",
+   "name": "Powder",
+   "x": 0.0,
+   "y": 0.0,
+   "w": 1.8,
+   "d": 2.2,
+   "evidence": [],
+   "confidence": "assumed"
+  },
+  {
+   "id": "laundry",
+   "name": "Laundry",
+   "x": 1.8,
+   "y": 0.0,
+   "w": 2.2,
+   "d": 2.2,
+   "evidence": [],
+   "confidence": "assumed"
+  },
+  {
+   "id": "flex",
+   "name": "Pantry / Storage",
+   "x": 0.0,
+   "y": 2.2,
+   "w": 4.0,
+   "d": 4.0,
+   "evidence": [],
+   "confidence": "assumed"
+  }
+ ],
+ "walls": [
+  {
+   "a": [
+    0,
+    0
+   ],
+   "b": [
+    11,
+    0
+   ],
+   "type": "exterior"
+  },
+  {
+   "a": [
+    11,
+    0
+   ],
+   "b": [
+    11,
+    12
+   ],
+   "type": "exterior"
+  },
+  {
+   "a": [
+    11,
+    12
+   ],
+   "b": [
+    0,
+    12
+   ],
+   "type": "exterior"
+  },
+  {
+   "a": [
+    0,
+    12
+   ],
+   "b": [
+    0,
+    0
+   ],
+   "type": "exterior"
+  },
+  {
+   "a": [
+    4.0,
+    0
+   ],
+   "b": [
+    4.0,
+    2.6
+   ],
+   "type": "interior",
+   "note": "foyer west wall"
+  },
+  {
+   "a": [
+    1.8,
+    0
+   ],
+   "b": [
+    1.8,
+    2.2
+   ],
+   "type": "interior"
+  },
+  {
+   "a": [
+    0,
+    2.2
+   ],
+   "b": [
+    4.0,
+    2.2
+   ],
+   "type": "interior"
+  },
+  {
+   "a": [
+    0,
+    6.2
+   ],
+   "b": [
+    4.0,
+    6.2
+   ],
+   "type": "interior"
+  },
+  {
+   "a": [
+    4.0,
+    2.2
+   ],
+   "b": [
+    4.0,
+    12
+   ],
+   "type": "interior",
+   "note": "living/flex east wall; stair side"
+  }
+ ],
+ "openings": [
+  {
+   "id": "front_door",
+   "kind": "pivot_door",
+   "wall": "y=0",
+   "from": 5.0,
+   "to": 6.4,
+   "height": 2.7,
+   "evidence": [
+    "interior/03"
+   ],
+   "confidence": "high"
+  },
+  {
+   "id": "foyer_window",
+   "kind": "window",
+   "wall": "y=0",
+   "from": 4.15,
+   "to": 4.9,
+   "sill": 0.5,
+   "height": 1.8,
+   "evidence": [
+    "interior/03"
+   ]
+  },
+  {
+   "id": "dining_front",
+   "kind": "window",
+   "wall": "y=0",
+   "from": 7.4,
+   "to": 10.6,
+   "sill": 0.6,
+   "height": 1.6,
+   "evidence": [
+    "interior/09"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "dining_side",
+   "kind": "window",
+   "wall": "x=11",
+   "from": 0.4,
+   "to": 3.8,
+   "sill": 0.6,
+   "height": 1.6,
+   "evidence": [
+    "interior/08",
+    "interior/09"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "kitchen_win",
+   "kind": "window",
+   "wall": "x=11",
+   "from": 6.3,
+   "to": 7.5,
+   "sill": 1.0,
+   "height": 1.1,
+   "evidence": [
+    "interior/07"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "rear_slider",
+   "kind": "sliding_glass",
+   "wall": "y=12",
+   "from": 4.6,
+   "to": 10.6,
+   "height": 2.8,
+   "evidence": [
+    "interior/01",
+    "interior/02"
+   ],
+   "confidence": "high"
+  },
+  {
+   "id": "living_door",
+   "kind": "glass_door",
+   "wall": "y=12",
+   "from": 0.8,
+   "to": 2.4,
+   "height": 2.7,
+   "evidence": [
+    "interior/12"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "id": "living_win",
+   "kind": "window",
+   "wall": "x=0",
+   "from": 7.5,
+   "to": 10.5,
+   "sill": 0.6,
+   "height": 1.6,
+   "evidence": [],
+   "confidence": "assumed"
+  },
+  {
+   "id": "powder_door",
+   "kind": "door",
+   "wall": "y=2.2",
+   "from": 0.6,
+   "to": 1.4,
+   "evidence": [],
+   "confidence": "assumed"
+  },
+  {
+   "id": "laundry_door",
+   "kind": "door",
+   "wall": "x=4.0",
+   "from": 0.6,
+   "to": 1.4,
+   "evidence": [],
+   "confidence": "assumed"
+  },
+  {
+   "id": "flex_door",
+   "kind": "door",
+   "wall": "x=4.0",
+   "from": 2.6,
+   "to": 3.4,
+   "evidence": [],
+   "confidence": "assumed"
+  },
+  {
+   "id": "living_open",
+   "kind": "opening",
+   "wall": "x=4.0",
+   "from": 9.0,
+   "to": 11.0,
+   "evidence": [
+    "interior/12"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "fixtures": [
+  {
+   "id": "island",
+   "kind": "island",
+   "x": 8.0,
+   "y": 5.0,
+   "w": 1.1,
+   "d": 3.0,
+   "material": "panda_marble",
+   "evidence": [
+    "interior/05",
+    "interior/06"
+   ]
+  },
+  {
+   "id": "stools",
+   "kind": "stools",
+   "count": 4,
+   "side": "west",
+   "of": "island",
+   "evidence": [
+    "interior/06"
+   ]
+  },
+  {
+   "id": "range_wall",
+   "kind": "counter",
+   "x": 10.35,
+   "y": 4.6,
+   "w": 0.65,
+   "d": 4.0,
+   "note": "matte black cabinets, range + marble hood, sink under window",
+   "evidence": [
+    "interior/05",
+    "interior/07"
+   ]
+  },
+  {
+   "id": "tall_cab",
+   "kind": "tall_cabinets",
+   "x": 5.6,
+   "y": 5.6,
+   "w": 0.65,
+   "d": 2.4,
+   "note": "matte black full-height",
+   "evidence": [
+    "interior/04"
+   ]
+  },
+  {
+   "id": "dining_tbl",
+   "kind": "table",
+   "x": 7.4,
+   "y": 1.6,
+   "w": 2.2,
+   "d": 1.1,
+   "material": "glass",
+   "evidence": [
+    "interior/08"
+   ]
+  },
+  {
+   "id": "banquette",
+   "kind": "banquette_L",
+   "x": 9.6,
+   "y": 0.3,
+   "w": 1.1,
+   "d": 3.6,
+   "evidence": [
+    "interior/09"
+   ]
+  },
+  {
+   "id": "atrium",
+   "kind": "planter",
+   "x": 4.25,
+   "y": 2.8,
+   "w": 1.2,
+   "d": 3.6,
+   "note": "black pebbles, white boulders, ferns under stair",
+   "evidence": [
+    "interior/08"
+   ]
+  },
+  {
+   "id": "sectional",
+   "kind": "sofa_L",
+   "x": 0.4,
+   "y": 7.4,
+   "w": 0.95,
+   "d": 4.2,
+   "evidence": [
+    "interior/12",
+    "interior/13"
+   ]
+  },
+  {
+   "id": "tv_panel",
+   "kind": "tv_wall",
+   "x": 3.75,
+   "y": 7.0,
+   "w": 0.1,
+   "d": 2.4,
+   "evidence": [
+    "interior/12"
+   ]
+  },
+  {
+   "id": "powder_wc",
+   "kind": "wc",
+   "x": 0.3,
+   "y": 0.3,
+   "w": 0.4,
+   "d": 0.6,
+   "confidence": "assumed"
+  },
+  {
+   "id": "sectional_b",
+   "kind": "sofa_L",
+   "x": 0.4,
+   "y": 10.45,
+   "w": 3.0,
+   "d": 0.95,
+   "evidence": [
+    "interior/12"
+   ]
+  }
+ ]
+}
