@@ -1,8 +1,19 @@
 """Exterior massing model of 1159 Diamond St, built from video reference.
 
-Run:  blender -b -P blender/build_exterior.py -- [--render]
+Run:  blender -b -P blender/build_exterior.py -- [options]
+  --render                 render review cameras (default output: renders/)
+  --polish a,b | none      polish modules from blender/polish/ to apply (default: all)
+  --cams a,b               only render these cameras
+  --out DIR                render output dir (relative to repo root)
+  --res WxH --samples N    render size / Cycles samples (default 960x540, 48)
+  --no-save                skip writing .blend/.glb (for parallel preview runs)
 Outputs: assets/house_exterior.blend, assets/house_exterior.glb,
          renders/*.png (with --render) from cameras matched to video frames.
+
+Polish modules: blender/polish/<name>.py each define apply(G), where G exposes this
+script's globals (MAT, mat, pbr, detail, box, mesh, cyl, link, place, palm, SHOTS,
+LOT, HOUSE, ... ). Modules run after the base build and before UV mapping, so
+textured meshes they add get real-world UVs automatically.
 
 Coordinates (metres): x = east (right when facing the house from the street),
 y = toward the alley (street at y=0), z = up.  Lot 15.3 x 38.4 m
@@ -17,7 +28,14 @@ import bpy
 from mathutils import Vector
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RENDER = "--render" in sys.argv
+ARGV = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+
+
+def opt(name, default=None):
+    return ARGV[ARGV.index(name) + 1] if name in ARGV else default
+
+
+RENDER = "--render" in ARGV
 
 LOT = dict(w=15.3, d=38.4)
 
@@ -615,15 +633,19 @@ def build_landscape():
           rot=1.57, collection="RoofDeck")
 
 
+SHOTS = {  # name: (location, target, lens mm) — polish modules may add close-up cameras
+
+    "front_street": ((7.5, -16.0, 1.7), (7.5, 10.0, 4.0), 30),            # exterior/05
+    "aerial_front": ((12.0, -14.0, 13.0), (7.5, 12.0, 3.0), 35),          # exterior/14
+    "top_down": ((7.65, 19.2, 70.0), (7.65, 19.2, 0.0), 35),              # exterior/15
+    "rear_courtyard": ((3.5, 29.8, 3.2), (9.5, 18.0, 3.8), 20),           # exterior/12
+    "aerial_rear": ((2.0, 46.0, 18.0), (8.0, 22.0, 2.0), 35),             # exterior/21
+}
+
+
 def cameras():
     """Cameras roughly matched to video frames for side-by-side review."""
-    shots = {
-        "front_street": ((7.5, -16.0, 1.7), (7.5, 10.0, 4.0), 30),            # exterior/05
-        "aerial_front": ((12.0, -14.0, 13.0), (7.5, 12.0, 3.0), 35),          # exterior/14
-        "top_down": ((7.65, 19.2, 70.0), (7.65, 19.2, 0.0), 35),              # exterior/15
-        "rear_courtyard": ((3.5, 29.8, 3.2), (9.5, 18.0, 3.8), 20),           # exterior/12
-        "aerial_rear": ((2.0, 46.0, 18.0), (8.0, 22.0, 2.0), 35),             # exterior/21
-    }
+    shots = SHOTS
     for name, (loc, target, lens) in shots.items():
         cam = bpy.data.cameras.new(name)
         cam.lens = lens
@@ -649,6 +671,30 @@ def world():
     bpy.context.object.data.angle = math.radians(1.5)
 
 
+def remove(prefix):
+    """Delete every object whose name starts with prefix (lets polish modules replace base parts)."""
+    for o in [o for o in bpy.data.objects if o.name.startswith(prefix)]:
+        bpy.data.objects.remove(o, do_unlink=True)
+
+
+def run_polish():
+    import importlib.util
+    import types
+    folder = os.path.join(ROOT, "blender", "polish")
+    chosen = opt("--polish")
+    if chosen == "none":
+        return
+    names = chosen.split(",") if chosen else sorted(
+        f[:-3] for f in os.listdir(folder) if f.endswith(".py") and not f.startswith("_")) if os.path.isdir(folder) else []
+    G = types.SimpleNamespace(**globals())
+    for name in names:
+        spec = importlib.util.spec_from_file_location(f"polish_{name}", os.path.join(folder, name + ".py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        mod.apply(G)
+        print("polish applied:", name)
+
+
 def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     materials()
@@ -658,27 +704,31 @@ def main():
     build_courtyard()
     build_pavilion()
     build_landscape()
+    run_polish()
     uv_all()
     shots = cameras()
     world()
 
-    os.makedirs(os.path.join(ROOT, "assets"), exist_ok=True)
-    bpy.ops.wm.save_as_mainfile(filepath=os.path.join(ROOT, "assets", "house_exterior.blend"))
-    bpy.ops.export_scene.gltf(filepath=os.path.join(ROOT, "assets", "house_exterior.glb"),
-                              export_format="GLB", export_apply=True)
+    if "--no-save" not in ARGV:
+        os.makedirs(os.path.join(ROOT, "assets"), exist_ok=True)
+        bpy.ops.wm.save_as_mainfile(filepath=os.path.join(ROOT, "assets", "house_exterior.blend"))
+        bpy.ops.export_scene.gltf(filepath=os.path.join(ROOT, "assets", "house_exterior.glb"),
+                                  export_format="GLB", export_apply=True)
 
     if RENDER:
         sc = bpy.context.scene
         sc.render.engine = "CYCLES"
-        sc.cycles.samples = 48
+        sc.cycles.samples = int(opt("--samples", 48))
         sc.cycles.use_denoising = True
-        sc.render.resolution_x, sc.render.resolution_y = 960, 540
+        w, h = opt("--res", "960x540").split("x")
+        sc.render.resolution_x, sc.render.resolution_y = int(w), int(h)
         sc.view_settings.view_transform = "AgX"
         sc.view_settings.look = "AgX - Base Contrast"
         sc.view_settings.exposure = 0.0
-        out = os.path.join(ROOT, "renders")
+        out = os.path.join(ROOT, opt("--out", "renders"))
         os.makedirs(out, exist_ok=True)
-        for name in shots:
+        cams = opt("--cams")
+        for name in (cams.split(",") if cams else shots):
             sc.camera = bpy.data.objects["Cam_" + name]
             sc.render.filepath = os.path.join(out, name + ".png")
             bpy.ops.render.render(write_still=True)
