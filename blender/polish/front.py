@@ -8,14 +8,14 @@ Street*, Sidewalk*, and new Front_* objects.  Never G.remove("Front_"): Front_do
 belong to the facade.
 
 Video evidence (frames/exterior/):
-- 05_front-facade-day, 06_front-facade-dusk: ~0.55 m white stucco planter wall along the street;
-  on top a rustic fence of peeled natural sticks (4-6 cm, ~9 cm pitch, 0.45-1.0 m above the wall,
-  a few taller, slight leans, mixed tan / grey tones).  Wall stops at two thick natural-timber gate
-  posts (~1.7 m); between them a ~1.6 m gate leaf of tight vertical sticks with top/bottom rails and
-  a diagonal brace, standing on a large flagstone pad set in turf.  Street side: red-mulch strip
-  (planting module), 1.5 m light concrete sidewalk with control joints, artificial-turf parkway with
-  one big stepping stone in line with the gate, kerb and asphalt.  Dusk: uplights in the strip wash
-  the wall; warm porch light.
+- 05_front-facade-day, 06_front-facade-dusk: ~0.6 m white stucco planter wall along the street;
+  on top a rustic fence of peeled natural sticks (4-6 cm, ~8 cm pitch, 0.6-1.1 m above the wall,
+  a few taller - tops reach the 1.7 m gate posts - slight leans, mixed tan / grey / dark tones).
+  The wall stops at two thick natural-timber gate posts; between them a ~1.6 m gate leaf of tight
+  vertical sticks with top/bottom rails and a diagonal brace, on a large flagstone pad set in turf.
+  Street side: red-mulch strip (planting module), 1.5 m light concrete sidewalk with control joints,
+  artificial-turf parkway with one big stepping stone in line with the gate, kerb and asphalt.  Dusk: spike uplights at the
+  wall foot wash the wall; warm porch downlight and sconces.
 - 02_entry-house-number: the square white porch column flush with the side wall carries a vertical
   "1159" in thin black geometric numerals (~0.3 m digits) under a white soffit + black roof edge.
 - 03_entry-door-planter: rough-hewn white limestone basin with a bent copper spout in front of the
@@ -55,52 +55,55 @@ FAR = dict(street=-16.2, gutter=-16.65, kerb=-16.8, parkway=-19.0, walk=-20.5)
 WALL = dict(y0=0.30, y1=0.60, h=0.58)
 GATE = (2.62, 4.58)                 # wall ends = outer faces of the gate posts (planting gap)
 POST = dict(r=0.075, h=1.70)
-LEAF = dict(z0=0.07, h=(1.02, 1.10), r=(0.017, 0.023), pitch=0.062, rails=(0.24, 0.90))
-FENCE = dict(pitch=0.08, jitter=0.02, r=(0.021, 0.033), above=(0.45, 1.0), above_w=(0.6, 1.15), tall_p=0.12,
-             tall=(1.0, 1.25), lean=0.035, embed=0.12)
+LEAF = dict(z0=0.07, h=(1.05, 1.13), r=(0.020, 0.026), pitch=0.056, rails=(0.22, 0.92))
+FENCE = dict(pitch=0.08, jitter=0.02, r=(0.021, 0.033), above=(0.58, 1.08), above_w=(0.65, 1.15), tall_p=0.12,
+             tall=(1.12, 1.35), lean=0.035, embed=0.12)   # heights vs the 1.7 m gate posts (05, 06)
 SIDE_FENCES = [(0.04, 0.62, 4.6), (LOT_W - 0.04, 0.62, 4.0)]   # lot-line returns (07, 14)
 SIDE_ABOVE = (1.05, 1.55)
 STICK_TONES = {                     # linear albedo targets: tan, weathered grey, warm (05, 06)
     "front_stick_a": (0.50, 0.40, 0.27),
     "front_stick_b": (0.44, 0.40, 0.33),
     "front_stick_c": (0.55, 0.41, 0.25),
+    "front_stick_d": (0.33, 0.24, 0.15),
 }
 
 # ---- entry: 02, 03, 05, 07, 14 -------------------------------------------------------------
 PORCH = dict(x0=2.4, x1=4.85, y0=2.3, floor=0.08,
-             roof=(1.95, 2.0, 4.95, 4.0), soffit=2.95, eave=3.3, pitch=0.447,  # pitch = front roofs
+             roof=(1.95, 2.0, 4.95, 4.0), soffit=2.95, eave=3.3, pitch=0.30,   # eave = front roofs
              fascia=(3.08, 3.33, 0.025))
 COLUMN = dict(x0=2.4, y0=2.45, size=0.36)          # flush with the house's west wall (02)
 NUMBER = dict(text="1159", h=0.30, gap=0.07, top=2.70, stroke=0.026, depth=0.014)
 SCONCES = [(2.70, -1), (4.43, 1)]                  # x, side of the black bracket (03)
 SCONCE = dict(w=0.11, d=0.07, z0=1.50, z1=2.25)
-BASIN = dict(x=1.62, y=4.12, rx=0.44, ry=0.38, h=0.72)
-CHAIRS = [(2.98, 3.3, -60), (4.32, 3.3, -120)]      # wicker bowl chairs on the porch: x, y, facing deg (03, 05, 14)
-CHAIR = dict(r=0.42, seat=0.62, shell=0.035, base_r=0.2)
+BASIN = dict(x=1.8, y=3.5, rx=0.5, ry=0.43, h=0.74)   # on the patio, in front of the porch (03, 07)
+CHAIRS = [(2.98, 3.3, -60), (4.32, 3.3, -120)]      # wicker bowl chairs: x, y, facing deg (03, 05, 14)
+CHAIR = dict(r=0.42, seat=0.56, shell=0.035, base_r=0.16)
 
 # ---- paths, turf, patio: 03, 05, 06, 07 ------------------------------------------------------
 STONES = [  # (cx, cy, half-length, half-width, rotation, top z) irregular flagstones
     (3.62, -3.75, 0.62, 0.38, 0.12, PARKWAY[2] + 0.02),   # parkway, in line with the gate (05, 06)
-    (3.60, -0.36, 0.80, 0.56, 0.0, 0.065),                 # gate pad (05, 06)
+    (3.60, -0.36, 0.80, 0.56, 0.0, 0.065, 0.3),            # gate pad, near-rectangular slab (05, 06)
     (3.62, 1.05, 0.52, 0.31, 0.06, 0.05),                  # gate -> porch (03)
     (3.50, 1.86, 0.50, 0.29, -0.08, 0.05),
     (2.08, 2.46, 0.25, 0.19, 0.5, 0.05),                   # toward the patio (07)
 ]
-TURF = [(0.02, 2.22, 2.4, 4.93), (2.75, 0.60, 4.45, 2.22), (2.4, 2.22, 4.85, 2.32),
+TURF = [(0.02, 2.22, 2.4, 4.93), (2.75, 0.60, 4.45, 2.22), (2.4, 2.22, 4.45, 2.32),
         (4.45, 2.22, 6.3, 3.97)]                           # inside the fence, around path + patio
 GATE_TURF = (GATE[0], SIDEWALK[1], GATE[1], WALL["y0"])
-PATIO = dict(cx=1.2, cy=3.55, r=1.2, base=0.035, top=0.058, gap=0.022, spacing=0.34)
-UPLIGHTS = [(0.9, -0.3), (2.35, -0.22), (4.85, -0.22), (6.9, -0.3), (9.4, -0.3),
-            (11.9, -0.3), (14.4, -0.3)]                    # dusk wall wash (06)
+PATIO = dict(cx=1.2, cy=3.55, r=1.2, base=0.035, top=0.058, gap=0.02, spacing=(0.26, 0.5))
+FLAG_B = 0.35                       # share of stones in the second (warmer) flagstone tone (07)
+UPLIGHT_W, PORCH_W, SCONCE_W = 15, 70, 20   # lamp watts: dusk glow (06) without daytime hot spots (05)
+UPLIGHTS = [(0.9, 0.02), (2.35, 0.02), (4.85, 0.02), (6.9, 0.02), (9.4, 0.02),
+            (11.9, 0.02), (14.4, 0.02)]                    # spikes in the strip: dusk wall wash (06)
 
 # ---- review close-ups: name -> (location, target, lens mm, matched frame, repo-relative) -----------
 CAMS = {   # 05-derived poses solved from gate / eave / wall corners (pinhole fit, ~13 mm equivalent)
     "front_view05": ((3.85, -6.13, 1.9), (7.57, 3.13, 2.5), 13, "frames/exterior/05_front-facade-day.jpg"),
     "front_gate": ((3.85, -6.13, 1.9), (2.64, 1.73, 1.05), 26, "renders/wip/front/ref/05_gate.jpg"),
     "front_fence": ((3.85, -6.13, 1.9), (9.56, -0.64, 0.81), 26, "renders/wip/front/ref/05_fence.jpg"),
-    "front_entry": ((2.15, 1.05, 1.25), (2.62, 2.45, 2.2), 20, "frames/exterior/02_entry-house-number.jpg"),
-    "front_door": ((4.6, 2.4, 1.35), (2.8, 4.0, 1.3), 24, "frames/exterior/03_entry-door-planter.jpg"),
-    "front_patio": ((1.6, 1.15, 1.8), (1.6, 4.2, 0.2), 18, "frames/exterior/07_side-garden-stone-patio.jpg"),
+    "front_entry": ((2.3, 0.95, 1.5), (2.8, 2.45, 2.05), 20, "frames/exterior/02_entry-house-number.jpg"),
+    "front_door": ((0.7, 2.55, 1.3), (3.4, 4.0, 1.05), 24, "frames/exterior/03_entry-door-planter.jpg"),
+    "front_patio": ((0.3, 5.3, 1.85), (2.1, 2.6, 0.3), 16, "frames/exterior/07_side-garden-stone-patio.jpg"),
     "front_entry_aerial": ((6.0, -6.0, 7.0), (3.4, 3.2, 1.6), 30, "renders/wip/front/ref/14_entry.jpg"),
 }
 
@@ -205,13 +208,12 @@ def clip(poly, n, c):
     return out
 
 
-def blob(rnd, cx, cy, a, b, rot, n=12, rough=0.09):
-    """Irregular rounded flagstone outline (superellipse with jitter)."""
+def blob(rnd, cx, cy, a, b, rot, n=12, rough=0.09, ex=0.55):
+    """Irregular rounded flagstone outline (superellipse with jitter; ex < 1 = squarer corners)."""
     pts = []
     for k in range(n):
         t = 2 * math.pi * k / n
         c, s = math.cos(t), math.sin(t)
-        ex = 0.55                                         # squarish but rounded corners
         x = a * math.copysign(abs(c) ** ex, c) * (1 + rnd.uniform(-rough, rough))
         y = b * math.copysign(abs(s) ** ex, s) * (1 + rnd.uniform(-rough, rough))
         pts.append((cx + x * math.cos(rot) - y * math.sin(rot), cy + x * math.sin(rot) + y * math.cos(rot)))
@@ -236,7 +238,7 @@ def lamp(G, name, kind, loc, energy, color=(1.0, 0.78, 0.5), target=None, size=0
     ld.shadow_soft_size = size
     if kind == "SPOT":
         ld.spot_size = math.radians(spot)
-        ld.spot_blend = 0.6
+        ld.spot_blend = 0.85
     o = bpy.data.objects.new(name, ld)
     o.location = loc
     if target is not None:
@@ -257,19 +259,23 @@ def materials(G):
     G.mat("front_flagstone", (0.66, 0.61, 0.50), 0.75)
     G.pbr("front_flagstone", "rock_boulder_dry", 1.6,
           overlay_tint((0.66, 0.61, 0.50), TEX_MEAN["rock_boulder_dry"], 0.5), 0.5)
+    G.mat("front_flagstone_b", (0.60, 0.53, 0.42), 0.75)
+    G.pbr("front_flagstone_b", "rock_boulder_dry", 1.3,
+          overlay_tint((0.60, 0.53, 0.42), TEX_MEAN["rock_boulder_dry"], 0.5), 0.5)
+    G.mat("front_basin_water", (0.03, 0.045, 0.04), 0.03)
     G.mat("front_limestone", (0.62, 0.59, 0.50), 0.85)
     G.pbr("front_limestone", "rock_boulder_dry", 0.9,
           overlay_tint((0.62, 0.59, 0.50), TEX_MEAN["rock_boulder_dry"], 0.7), 0.7)
-    G.mat("front_mortar", (0.40, 0.38, 0.34), 0.9)
+    G.mat("front_mortar", (0.47, 0.45, 0.41), 0.9)
     G.pbr("front_mortar", "concrete_floor_02", 1.0,
-          overlay_tint((0.40, 0.38, 0.34), TEX_MEAN["concrete_floor_02"], 0.4), 0.4)
+          overlay_tint((0.47, 0.45, 0.41), TEX_MEAN["concrete_floor_02"], 0.4), 0.4)
     G.mat("front_sidewalk", (0.52, 0.50, 0.46), 0.85)
     G.pbr("front_sidewalk", "concrete_floor_02", 2.5,
           overlay_tint((0.52, 0.50, 0.46), TEX_MEAN["concrete_floor_02"], 0.45), 0.45)
     G.mat("front_kerb", (0.45, 0.44, 0.41), 0.85)
     G.pbr("front_kerb", "concrete_floor_02", 2.0,
           overlay_tint((0.45, 0.44, 0.41), TEX_MEAN["concrete_floor_02"], 0.4), 0.4)
-    for name in ("front_flagstone", "front_mortar", "front_sidewalk", "front_kerb"):
+    for name in ("front_flagstone", "front_flagstone_b", "front_mortar", "front_sidewalk", "front_kerb"):
         for nd in G.MAT[name].node_tree.nodes:                 # calmer bump on flat paving
             if nd.type == "NORMAL_MAP":
                 nd.inputs["Strength"].default_value = 0.5
@@ -277,7 +283,8 @@ def materials(G):
     G.pbr("front_turf", "leafy_grass", 1.2, overlay_tint(TURF_TONE, TEX_MEAN["leafy_grass"], 0.45), 0.45)
     G.mat("front_rattan", (0.40, 0.27, 0.13), 0.8)
     G.detail("front_rattan", "noise", (0.30, 0.19, 0.09), (0.50, 0.36, 0.19), scale=60, bump=0.4)
-    G.mat("front_alabaster", (0.92, 0.84, 0.68), 0.35, emit=((1.0, 0.76, 0.48), 1.6))
+    G.mat("front_alabaster", (0.92, 0.84, 0.68), 0.35, emit=((1.0, 0.72, 0.42), 0.9))
+    G.detail("front_alabaster", "voronoi", (0.95, 0.88, 0.74), (0.62, 0.45, 0.26), scale=9, bump=0.05)
     G.mat("front_copper", (0.45, 0.22, 0.11), 0.5, 0.65)
     G.mat("front_stream", (0.9, 0.95, 1.0), 0.05, transmission=1.0)
     G.mat("front_lens", (1.0, 0.9, 0.7), 0.3, emit=((1.0, 0.8, 0.55), 4.0))
@@ -304,6 +311,7 @@ def street(G):
     lawn.box(x0, SIDEWALK[1], -0.1, 0.0, 0.0, 0.03)
     lawn.box(LOT_W, SIDEWALK[1], -0.1, x1, 0.0, 0.03)
     lawn.box(x0, FAR["parkway"], -0.1, x1, FAR["kerb"], top - 0.01)
+    lawn.box(0.0, SIDEWALK[1], -0.1, LOT_W, 0.0, 0.0)      # ground under the planting module's mulch strip
     lawn.build(G, "Street_parkway_lawn", ["lawn_ground"], "Site")
     # sidewalks: panels with control joints over a slightly darker bed
     walk, bed = Builder(), Builder()
@@ -332,6 +340,11 @@ def stick(B, rnd, base, length, r, lean, mi, sides=6, segs=3):
     B.tube(pts, radii, sides, mi, rnd=rnd, jitter=0.07, slant=rnd.uniform(0.0, 0.8) * r)
 
 
+def tone(rnd):
+    """Stick material index: mostly tan / grey / warm, a few dark-barked ones (05, 06)."""
+    return rnd.choices(range(len(STICK_TONES)), weights=(0.35, 0.25, 0.27, 0.13))[0]
+
+
 def stick_row(B, rnd, a0, a1, fixed, along_x, zbase, above, pitch):
     a = a0 + rnd.uniform(0.0, pitch * 0.4)
     while a < a1:
@@ -340,7 +353,7 @@ def stick_row(B, rnd, a0, a1, fixed, along_x, zbase, above, pitch):
         off = rnd.uniform(-0.035, 0.035)
         lean = (rnd.gauss(0, FENCE["lean"]), rnd.gauss(0, FENCE["lean"] * 0.7))
         base = (a, fixed + off, zbase - FENCE["embed"]) if along_x else (fixed + off, a, zbase - FENCE["embed"])
-        stick(B, rnd, base, h + FENCE["embed"], r, lean, rnd.randrange(3))
+        stick(B, rnd, base, h + FENCE["embed"], r, lean, tone(rnd))
         a += pitch + rnd.uniform(-FENCE["jitter"], FENCE["jitter"])
 
 
@@ -356,10 +369,12 @@ def fence(G, rnd):
     stick_row(top, rnd, 0.05, GATE[0] - 0.06, yc, True, W["h"], FENCE["above_w"], FENCE["pitch"] * 1.1)
     stick_row(top, rnd, GATE[1] + 0.06, LOT_W - 0.04, yc, True, W["h"], FENCE["above"], FENCE["pitch"])
     top.build(G, "Fence_sticks", mats)
-    side = Builder()                                      # ground-set returns on the lot lines (07, 14)
+    # ground-set returns on the lot lines (07, 14).  Named Front_* on purpose: the planting module
+    # unions every Fence_* object into one obstacle box, which must stay a thin strip along the street.
     for x, y0, y1 in SIDE_FENCES:
+        side = Builder()
         stick_row(side, rnd, y0, y1, x, False, 0.0, SIDE_ABOVE, FENCE["pitch"] * 1.05)
-    side.build(G, "Fence_side", mats)
+        side.build(G, "Front_side_fence_" + ("w" if x < LOT_W / 2 else "e"), mats)
     # gate posts: thick natural timber, slightly irregular (05)
     posts = Builder()
     for x in (GATE[0] + POST["r"], GATE[1] - POST["r"]):
@@ -374,22 +389,20 @@ def fence(G, rnd):
         x = xa + (xb - xa) * i / n + rnd.uniform(-0.006, 0.006)
         h = rnd.uniform(*LEAF["h"])
         stick(gate, rnd, (x, yc, LEAF["z0"]), h, rnd.uniform(*LEAF["r"]),
-              (rnd.gauss(0, 0.006), rnd.gauss(0, 0.004)), rnd.randrange(3), segs=2)
+              (rnd.gauss(0, 0.006), rnd.gauss(0, 0.004)), tone(rnd), segs=2)
     ry = yc - 0.045
     for z in LEAF["rails"]:
         gate.tube([(xa - 0.03, ry, LEAF["z0"] + z), (xb + 0.03, ry, LEAF["z0"] + z)], [0.024, 0.022], 7, 0,
                   cap_start=True)
     z0, z1 = LEAF["z0"] + LEAF["rails"][0], LEAF["z0"] + LEAF["rails"][1]
-    gate.tube([(xa + 0.04, ry - 0.005, z0), (xb - 0.04, ry - 0.005, z1)], [0.021, 0.021], 7, 1, cap_start=True)
+    by = yc + 0.045                                       # diagonal brace on the garden side
+    gate.tube([(xa + 0.04, by, z0), (xb - 0.04, by, z1)], [0.021, 0.021], 7, 1, cap_start=True)
     gate.build(G, "Fence_gate", mats)
 
 
 # =============================================================================================
 # entry porch, house number, sconces
 # =============================================================================================
-DIGITS = {}
-
-
 def digit_paths(ch):
     """Thin geometric (Futura-like) numerals in unit height: list of (polyline, closed)."""
     if ch == "1":
@@ -464,7 +477,13 @@ def house_number(G):
 
 def porch(G):
     P, C = PORCH, COLUMN
-    G.box("Front_porch_floor", P["x0"], P["y0"], -0.03, P["x1"], G.GROUND_FRONT_Y, P["floor"], "stone", "House")
+    G.box("Front_porch_floor", P["x0"], P["y0"], -0.03, P["x1"], G.GROUND_FRONT_Y, P["floor"] - 0.03,
+          "front_mortar", "House")
+    fl = Builder()                                         # flagstone porch floor (14)
+    crazy_paving(fl, random.Random(SEED + 1), [(P["x0"] + 0.02, P["y0"] + 0.02), (P["x1"] - 0.02, P["y0"] + 0.02),
+                 (P["x1"] - 0.02, G.GROUND_FRONT_Y - 0.01), (P["x0"] + 0.02, G.GROUND_FRONT_Y - 0.01)],
+                 PATIO["spacing"], PATIO["gap"], P["floor"] - 0.04, P["floor"])
+    fl.build(G, "Front_porch_floor_stones", ["front_flagstone", "front_flagstone_b"], "House")
     G.box("Porch_column", C["x0"], C["y0"], P["floor"], C["x0"] + C["size"], C["y0"] + C["size"],
           P["soffit"], "stucco", "House")
     rx0, ry0, rx1, ry1 = P["roof"]
@@ -475,7 +494,8 @@ def porch(G):
     fas.box(rx0 - ft, ry0, fz0, rx0, ry1, fz1)
     fas.box(rx1, ry0, fz0, rx1 + ft, ry1, fz1)
     fas.build(G, "Front_porch_fascia", ["frame_black"], "House")
-    # small hip roof, same pitch + eave height as Roof_front_*; its back slope dives into Roof_front_0
+    # small hip roof at the Roof_front_* eave height (lower pitch so it reads as part of the eave);
+    # its back slope dives under Roof_front_0
     inset = (ry1 - ry0) / 2
     zr = P["eave"] + P["pitch"] * inset
     ym = (ry0 + ry1) / 2
@@ -486,7 +506,8 @@ def porch(G):
     cx, cy = (P["x0"] + P["x1"]) / 2 + 0.1, (C["y0"] + G.GROUND_FRONT_Y) / 2 + 0.1
     G.cyl("Front_porch_downlight", cx, cy, P["soffit"] - 0.006, P["soffit"] + 0.001, 0.055, "front_lens",
           16, "House")
-    lamp(G, "Front_porch_downlight_lamp", "SPOT", (cx, cy, P["soffit"] - 0.03), 35, target=(cx, cy, 0), spot=110)
+    lamp(G, "Front_porch_downlight_lamp", "SPOT", (cx, cy, P["soffit"] - 0.03), PORCH_W,
+         target=(cx, cy, 0), spot=120)
     house_number(G)
     # tall slim alabaster sconces with a black side bracket (02, 03)
     S, wy = SCONCE, G.GROUND_FRONT_Y
@@ -496,7 +517,7 @@ def porch(G):
         bx = x + side * S["w"] / 2
         G.box(f"Wall_light_front_{i}_bracket", min(bx, bx + side * 0.022), wy - S["d"] - 0.006, S["z0"] + 0.1,
               max(bx, bx + side * 0.022), wy, S["z1"] - 0.12, "frame_black", "House")
-        lamp(G, f"Wall_light_front_{i}_lamp", "POINT", (x, wy - S["d"] - 0.12, (S["z0"] + S["z1"]) / 2), 10)
+        lamp(G, f"Wall_light_front_{i}_lamp", "POINT", (x, wy - S["d"] - 0.12, (S["z0"] + S["z1"]) / 2), SCONCE_W)
 
 
 def chairs(G):
@@ -505,14 +526,14 @@ def chairs(G):
     R, t, M, N = C["r"], C["shell"], 8, 28
     B = Builder()
     rows = []
-    for layer, rad in enumerate((R, R - t)):
+    for rad in (R, R - t):                                 # outer + inner shell
         grid = []
         for i in range(M + 1):
             ring = []
             for j in range(N):
                 th = 2 * math.pi * j / N
                 phi_max = math.pi * (0.56 + 0.29 * (1 - math.cos(th)) / 2)     # low front, high back
-                phi = 0.2 * math.pi + (phi_max - 0.2 * math.pi) * i / M
+                phi = 0.16 * math.pi + (phi_max - 0.16 * math.pi) * i / M
                 ring.append((rad * math.sin(phi) * math.cos(th), rad * math.sin(phi) * math.sin(th),
                              C["seat"] - rad * math.cos(phi)))
             grid.append(B.verts(ring))
@@ -526,8 +547,8 @@ def chairs(G):
     B.faces([(out[M] + j, out[M] + (j + 1) % N, inn[M] + (j + 1) % N, inn[M] + j) for j in range(N)])   # rim
     B.faces([[inn[0] + j for j in range(N)]])                                                       # seat pan
     B.faces([[out[0] + j for j in range(N - 1, -1, -1)]])
-    B.tube([(0, 0, 0.0), (0, 0, C["seat"] - R * math.cos(0.2 * math.pi) + 0.02)], [C["base_r"], C["base_r"] * 0.8],
-           16, 0, cap_start=False)
+    base_top = C["seat"] - R * math.cos(0.16 * math.pi) + 0.02
+    B.tube([(0, 0, 0.0), (0, 0, base_top)], [C["base_r"], C["base_r"] * 0.8], 16, 0)                 # pedestal
     cz = C["seat"] - 0.22
     B.tube([(0.03, 0, cz), (0.03, 0, cz + 0.12)], [0.29, 0.28], 20, 1)                               # cushion
     proto = B.build(G, "Front_porch_chair_0", ["front_rattan", "macrame"], "House")
@@ -544,46 +565,54 @@ def chairs(G):
 # stone basin fountain (03, 07)
 # =============================================================================================
 def basin(G, rnd):
+    """Rough-hewn limestone block: lathe profile + low-frequency bulges + per-vertex chisel facets,
+    uneven chipped rim, deep bowl with a water surface (03, 07)."""
     Bs = BASIN
     cx, cy, rx, ry, h = Bs["x"], Bs["y"], Bs["rx"], Bs["ry"], Bs["h"]
-    prof = [(1.00, 0.00), (1.04, 0.22), (1.05, 0.50), (1.00, 0.86), (0.97, 1.00),     # outer
-            (0.74, 0.97), (0.67, 0.80), (0.50, 0.68), (0.0, 0.64)]                     # inner bowl
-    N = 30
-    ph = [rnd.uniform(0, 2 * math.pi) for _ in range(5)]
+    prof = [(0.90, 0.00), (1.00, 0.10), (1.06, 0.32), (1.07, 0.58), (1.03, 0.84), (0.97, 1.00),   # outer
+            (0.79, 0.99), (0.72, 0.84), (0.60, 0.71), (0.32, 0.65), (0.0, 0.64)]                   # bowl
+    RIM = (5, 6)
+    N = 36
+    ph = [rnd.uniform(0, 2 * math.pi) for _ in range(7)]
 
-    def wob(a):
-        return 1 + 0.05 * math.sin(2 * a + ph[0]) + 0.035 * math.sin(3 * a + ph[1]) + 0.02 * math.sin(5 * a + ph[2])
-    rim = [0.045 * math.sin(2 * a + ph[3]) + 0.03 * math.sin(4 * a + ph[4]) + rnd.uniform(-0.025, 0.025)
-           for a in (2 * math.pi * j / N for j in range(N))]
-    for j in rnd.sample(range(N), 3):                    # a few chipped notches in the rim
-        rim[j] -= rnd.uniform(0.05, 0.1)
+    def disp(a, zf):
+        return (1 + 0.06 * math.sin(2 * a + ph[0] + 1.5 * zf) + 0.04 * math.sin(3 * a + ph[1] - 2.0 * zf)
+                + 0.025 * math.sin(5 * a + ph[2] + 3.0 * zf))
+    rim = [0.05 * math.sin(a + ph[3]) + 0.035 * math.sin(3 * a + ph[4]) + 0.02 * math.sin(7 * a + ph[5])
+           + rnd.uniform(-0.03, 0.03) for a in (2 * math.pi * j / N for j in range(N))]
+    for j in rnd.sample(range(N), 4):                    # chipped notches in the rim
+        for dj, f in ((0, 1.0), (1, 0.6), (-1, 0.5)):
+            rim[(j + dj) % N] -= f * rnd.uniform(0.05, 0.11)
     B = Builder()
     rings = []
     for k, (rf, zf) in enumerate(prof[:-1]):
         ring = []
         for j in range(N):
             a = 2 * math.pi * j / N
-            s = wob(a) * (1 + rnd.uniform(-0.025, 0.025)) * rf
-            z = zf * h + (rim[j] * h if k in (4, 5) else rnd.uniform(-0.01, 0.01) * (k > 0))
-            ring.append((cx + rx * s * math.cos(a), cy + ry * s * math.sin(a), z))
+            chisel = 1 + (rnd.uniform(-0.04, 0.04) if k not in RIM else rnd.uniform(-0.02, 0.02))
+            r = disp(a, zf) * chisel * rf
+            z = zf * h + (rim[j] * h if k in RIM else rnd.uniform(-0.015, 0.015) * h * (0 < k))
+            ring.append((cx + rx * r * math.cos(a), cy + ry * r * math.sin(a), z))
         rings.append(B.verts(ring))
     centre = B.verts([(cx, cy, prof[-1][1] * h)])
     for k in range(len(rings) - 1):
-        a, b = rings[k], rings[k + 1]
-        B.faces([(a + j, a + (j + 1) % N, b + (j + 1) % N, b + j) for j in range(N)])
+        r0, r1 = rings[k], rings[k + 1]
+        B.faces([(r0 + j, r0 + (j + 1) % N, r1 + (j + 1) % N, r1 + j) for j in range(N)])
     last = rings[-1]
     B.faces([(last + j, last + (j + 1) % N, centre) for j in range(N)])
     B.build(G, "Front_stone_basin", ["front_limestone"])
-    # water surface just below the rim
-    wz, wr = 0.86 * h, 0.70
-    ring = [(cx + rx * wr * wob(2 * math.pi * j / N) * math.cos(2 * math.pi * j / N),
-             cy + ry * wr * wob(2 * math.pi * j / N) * math.sin(2 * math.pi * j / N), wz) for j in range(N)]
-    G.mesh("Front_basin_water", ring, [tuple(range(N))], "water", COLL)
+    # water surface just below the lowest rim point
+    wzf = 0.86
+    wz, wr = wzf * h, 0.745
+    ring = [(cx + rx * wr * disp(2 * math.pi * j / N, wzf) * math.cos(2 * math.pi * j / N),
+             cy + ry * wr * disp(2 * math.pi * j / N, wzf) * math.sin(2 * math.pi * j / N), wz) for j in range(N)]
+    G.mesh("Front_basin_water", ring, [tuple(range(N))], "front_basin_water", COLL)
     # bent copper spout rising behind the basin, pouring into it
-    px, py = cx - 0.12, cy + ry * 1.08 + 0.04
-    rb = 0.09
+    px, py = cx - 0.12, cy + ry * 1.12 + 0.04
+    rb = 0.115
     path = [(px, py, -0.05), (px, py, 0.6), (px, py, 1.0)]
-    path += [(px, py - rb + rb * math.cos(math.pi * i / 8), 1.0 + rb * math.sin(math.pi * i / 8)) for i in range(1, 9)]
+    path += [(px, py - rb + rb * math.cos(math.pi * i / 8), 1.0 + rb * math.sin(math.pi * i / 8))
+             for i in range(1, 9)]
     path += [(px, py - 2 * rb, 0.86)]
     sp = Builder()
     sp.tube(path, [0.019] * len(path), 8, cap_end=True)
@@ -604,9 +633,56 @@ def paths(G, rnd):
     turf.box(x0, y0, -0.05, x1, y1, PARKWAY[2])
     turf.build(G, "Front_turf", ["front_turf"])
     stones = Builder()
-    for cx, cy, a, b, rot, top in STONES:
-        stones.prism(blob(rnd, cx, cy, a, b, rot, n=14), top - 0.06, top)
+    for cx, cy, a, b, rot, top, *ex in STONES:
+        rough = 0.03 if ex else 0.09
+        stones.prism(blob(rnd, cx, cy, a, b, rot, n=16, rough=rough, ex=ex[0] if ex else 0.55), top - 0.06, top)
     stones.build(G, "Front_path", ["front_flagstone"])
+
+
+def crazy_paving(B, rnd, domain, spacing, gap, z0, top):
+    """Flagstones = Voronoi cells of variable-spacing seeds inside a convex domain, each shrunk by
+    half a joint; random second tone (07 patio, 14 porch floor)."""
+    xs, ys = [p[0] for p in domain], [p[1] for p in domain]
+    inside = [(-(b[1] - a[1]), b[0] - a[0], a) for a, b in zip(domain, domain[1:] + domain[:1])]
+    sign = 1 if area(domain) > 0 else -1
+    seeds = []
+    for _ in range(6000):
+        p = (rnd.uniform(min(xs), max(xs)), rnd.uniform(min(ys), max(ys)))
+        if any(sign * (nx * (p[0] - a[0]) + ny * (p[1] - a[1])) < 0 for nx, ny, a in inside):
+            continue
+        sp = rnd.uniform(*spacing)
+        if all((p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 > (0.5 * (sp + sq)) ** 2 for q, sq in seeds):
+            seeds.append((p, sp))
+    for i, (p, _) in enumerate(seeds):
+        poly = domain[:]
+        for j, (q, _) in enumerate(seeds):
+            d = math.hypot(q[0] - p[0], q[1] - p[1])
+            if i == j or d > 3 * spacing[1]:
+                continue
+            n = ((q[0] - p[0]) / d, (q[1] - p[1]) / d)
+            m = ((p[0] + q[0]) / 2, (p[1] + q[1]) / 2)
+            poly = clip(poly, n, m[0] * n[0] + m[1] * n[1] - gap / 2)
+            if len(poly) < 3:
+                break
+        if len(poly) < 3:
+            continue
+        pieces = [poly]
+        for _ in range(2):                    # random straight cuts break up the honeycomb look
+            nxt = []
+            for pc in pieces:
+                if abs(area(pc)) > 0.045 and rnd.random() < 0.55:
+                    cx = sum(q[0] for q in pc) / len(pc) + rnd.uniform(-0.04, 0.04)
+                    cy = sum(q[1] for q in pc) / len(pc) + rnd.uniform(-0.04, 0.04)
+                    a = rnd.uniform(0, math.pi)
+                    n = (math.cos(a), math.sin(a))
+                    c = cx * n[0] + cy * n[1]
+                    nxt += [clip(pc, n, c - gap / 2), clip(pc, (-n[0], -n[1]), -c - gap / 2)]
+                else:
+                    nxt.append(pc)
+            pieces = nxt
+        for pc in pieces:
+            if len(pc) >= 3 and abs(area(pc)) > 0.004:
+                B.prism(pc, z0, top + rnd.uniform(-0.004, 0.004), 1 if rnd.random() < FLAG_B else 0)
 
 
 def patio(G, rnd):
@@ -616,40 +692,22 @@ def patio(G, rnd):
     base = Builder()
     base.prism(disc, -0.03, P["base"])
     base.build(G, "Side_patio", ["front_mortar"])
-    # crazy paving: Voronoi cells of jittered seeds, shrunk by half the joint each side (07, 15)
-    seeds = []
-    for _ in range(5000):
-        a, rr = rnd.uniform(0, 2 * math.pi), R * math.sqrt(rnd.random())
-        p = (cx + rr * math.cos(a), cy + rr * math.sin(a))
-        if all((p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 > P["spacing"] ** 2 for q in seeds):
-            seeds.append(p)
-    edge = [(cx + (R - 0.03) * math.cos(2 * math.pi * k / 64), cy + (R - 0.03) * math.sin(2 * math.pi * k / 64))
+    edge = [(cx + (R - 0.025) * math.cos(2 * math.pi * k / 64), cy + (R - 0.025) * math.sin(2 * math.pi * k / 64))
             for k in range(64)]
     B = Builder()
-    for i, p in enumerate(seeds):
-        poly = edge[:]
-        for j, q in enumerate(seeds):
-            d = math.hypot(q[0] - p[0], q[1] - p[1])
-            if i == j or d > 3 * P["spacing"]:
-                continue
-            n = ((q[0] - p[0]) / d, (q[1] - p[1]) / d)
-            m = ((p[0] + q[0]) / 2, (p[1] + q[1]) / 2)
-            poly = clip(poly, n, m[0] * n[0] + m[1] * n[1] - P["gap"] / 2)
-            if len(poly) < 3:
-                break
-        if len(poly) >= 3 and abs(area(poly)) > 0.004:
-            B.prism(poly, P["base"] - 0.01, P["top"] + rnd.uniform(-0.004, 0.004))
-    B.build(G, "Side_patio_stones", ["front_flagstone"])
+    crazy_paving(B, rnd, edge, P["spacing"], P["gap"], P["base"] - 0.01, P["top"])
+    B.build(G, "Side_patio_stones", ["front_flagstone", "front_flagstone_b"])
 
 
 def uplights(G):
     B = Builder()
     for i, (x, y) in enumerate(UPLIGHTS):
-        head = (x, y + 0.05, 0.16)
-        B.tube([(x, y - 0.02, 0.0), (x, y + 0.02, 0.10)], [0.012, 0.012], 6, 0)          # stake
-        B.tube([(x, y, 0.08), head], [0.032, 0.034], 10, 0)                              # body
-        B.tube([head, (x, y + 0.051, 0.161)], [0.026, 0.026], 10, 1)                     # lens
-        lamp(G, f"Front_uplight_{i}", "SPOT", (x, y + 0.08, 0.2), 14, target=(x, WALL["y0"], 1.0), spot=70)
+        head = (x, y + 0.04, 0.108)        # kept under 0.12 m so other modules treat it as ground
+        B.tube([(x, y - 0.01, 0.0), (x, y + 0.01, 0.06)], [0.012, 0.012], 6, 0)          # stake
+        B.tube([(x, y, 0.05), head], [0.03, 0.032], 10, 0)                               # body
+        B.tube([head, (x, y + 0.041, 0.109)], [0.025, 0.025], 10, 1)                     # lens
+        lamp(G, f"Front_uplight_{i}", "SPOT", (x, y + 0.07, 0.14), UPLIGHT_W,
+             target=(x, WALL["y0"] + 0.05, 1.3), spot=50)
     B.build(G, "Front_uplight_fixtures", ["frame_black", "front_lens"])
 
 
