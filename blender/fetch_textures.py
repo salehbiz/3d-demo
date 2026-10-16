@@ -14,6 +14,8 @@ TEXTURES = [
     "white_plaster_rough_01", "box_profile_metal_sheet", "black_painted_planks", "wood_floor_deck",
     "leafy_grass", "precast_stone_paving", "stone_pathway", "pebble_cemented_floor", "asphalt_02",
     "concrete_floor_02",
+    # added by polish modules (see POLYHAVEN_ASSETS in blender/polish/*.py)
+    "teak_veneer", "rough_wood", "rock_boulder_dry", "black_oak_veneer",
 ]
 MAPS = {"Diffuse": "diff", "nor_gl": "nor", "Rough": "rough"}
 MODELS = ["shrub_02", "shrub_04", "outdoor_table_chair_set_01"]
