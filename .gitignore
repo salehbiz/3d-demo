@@ -4,3 +4,4 @@ assets/models/
 renders/wip/
 __pycache__/
 web/test-shots/
+web/public/models/house.json
