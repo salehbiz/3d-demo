@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diamond Street Residence</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Work+Sans:wght@400;500&display=swap">
+<style>
+  /* Layout: full-bleed 3D canvas, one floating card top-left, one hint bar bottom. */
+  :root {
+    --bg: #eef1f0; --panel: rgba(250, 251, 250, 0.9); --fg: #1d1f1f; --muted: #5d6463;
+    --line: rgba(29, 31, 31, 0.12); --accent: #1f8a8a;
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --body: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121515; --panel: rgba(24, 28, 28, 0.88); --fg: #eef2f1; --muted: #a3acab;
+      --line: rgba(238, 242, 241, 0.14); --accent: #5cc6c4; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121515; --panel: rgba(24, 28, 28, 0.88); --fg: #eef2f1; --muted: #a3acab;
+    --line: rgba(238, 242, 241, 0.14); --accent: #5cc6c4; color-scheme: dark;
+  }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); overflow: hidden; }
+  #stage { position: fixed; inset: 0; }
+  #stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .card {
+    position: fixed; top: calc(16px + env(safe-area-inset-top, 0px));
+    left: max(16px, env(safe-area-inset-left, 0px));
+    max-width: min(340px, calc(100% - 32px)); padding: 14px 16px; border-radius: 10px;
+    background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(10px);
+    display: grid; gap: 6px;
+  }
+  .eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 22px; line-height: 1.15; text-wrap: balance; }
+  .facts { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.2s; }
+  .status { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .hint {
+    position: fixed; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
+    padding: 8px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line);
+    font-size: 12px; color: var(--muted); white-space: nowrap; max-width: calc(100% - 32px); overflow: hidden; text-overflow: ellipsis;
+  }
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+<section class="card" aria-live="polite">
+  <span class="eyebrow">Pacific Beach, San Diego · preview</span>
+  <h1>1159 Diamond Street</h1>
+  <p class="facts">Exterior model from the property video. Lot 6,300 sq ft (585 m²), three levels with roof deck, pool and spa, detached pavilion.</p>
+  <div class="bar" id="bar"><i></i></div>
+  <span class="status" id="status">Loading model…</span>
+</section>
+<div class="hint">Drag to orbit · scroll or pinch to zoom · right-drag to pan</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { Sky } from "three/addons/objects/Sky.js";
+
+const stage = document.getElementById("stage");
+const statusEl = document.getElementById("status");
+const barEl = document.querySelector("#bar > i");
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(stage.clientWidth, stage.clientHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.9;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, stage.clientWidth / stage.clientHeight, 0.1, 2000);
+camera.position.set(34, 26, 22);
+
+const sky = new Sky();
+sky.scale.setScalar(4000);
+const sun = new THREE.Vector3().setFromSphericalCoords(1, THREE.MathUtils.degToRad(48), THREE.MathUtils.degToRad(205));
+Object.assign(sky.material.uniforms, {});
+sky.material.uniforms.turbidity.value = 4;
+sky.material.uniforms.rayleigh.value = 1.2;
+sky.material.uniforms.sunPosition.value.copy(sun);
+scene.add(sky);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.55;
+
+scene.add(new THREE.HemisphereLight(0xdfeeff, 0x6b7a55, 0.6));
+const light = new THREE.DirectionalLight(0xfff3e2, 2.6);
+light.position.copy(sun).multiplyScalar(80);
+light.castShadow = true;
+light.shadow.mapSize.set(2048, 2048);
+Object.assign(light.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 250 });
+light.shadow.bias = -0.0004;
+light.shadow.normalBias = 0.03;
+scene.add(light, light.target);
+
+const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: 0x8f9a7c, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.09;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.maxPolarAngle = THREE.MathUtils.degToRad(86);
+controls.minDistance = 4;
+controls.maxDistance = 140;
+
+const draco = new DRACOLoader().setDecoderPath("./public/draco/");
+const loader = new GLTFLoader().setDRACOLoader(draco);
+loader.load("./public/models/house.glb", (gltf) => {
+  const model = gltf.scene;
+  model.traverse((o) => {
+    if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }
+  });
+  scene.add(model);
+  const box = new THREE.Box3().setFromObject(model.getObjectByName("House_right_block") || model);
+  const lot = new THREE.Vector3(7.65, 2.5, -19.2);           // centre of the 15.3 x 38.4 m lot (glTF Y-up)
+  controls.target.copy(box.isEmpty() ? lot : lot);
+  light.target.position.copy(lot);
+  statusEl.textContent = "Model loaded. Full viewer with tours, plan view and walk mode is on the way.";
+  barEl.style.width = "100%";
+}, (e) => {
+  if (e.total) {
+    const pct = Math.round((e.loaded / e.total) * 100);
+    barEl.style.width = pct + "%";
+    statusEl.textContent = `Loading model… ${pct}%  (${(e.loaded / 1e6).toFixed(1)} of ${(e.total / 1e6).toFixed(1)} MB)`;
+  }
+}, (err) => {
+  statusEl.textContent = "The 3D model could not be loaded. Reload the page to try again.";
+  console.error(err);
+});
+
+addEventListener("resize", () => {
+  camera.aspect = stage.clientWidth / stage.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(stage.clientWidth, stage.clientHeight);
+});
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>
