@@ -8,32 +8,34 @@ woven / macrame looks come from small textures generated here with numpy and pac
 
 Video evidence (frames/exterior/...):
 - 15_top-down-site-plan-night (+ generated/01_site-plan): the plan; positions were scaled on the
-  pool's straight north / west walls (west deck) and on the bulkhead / spa (roof deck).
-  West strip, from the house: raised timber deck with lights along the pool edge; long white
-  dining table south of one big octagonal cantilever umbrella whose pole stands on the planting
-  side; then the lounge - straight white sofa against the west bed, oval coffee table, a teak
+  lot walls, the hip-roof eave and the pool's straight N / W walls (west deck) and on the bulkhead /
+  spa (roof deck).  West strip, from the house: raised timber deck with lights along the pool edge;
+  long white dining table under one big octagonal cantilever umbrella whose pole stands on the
+  planting side; then the lounge - straight white sofa against the west bed, oval coffee table, a teak
   armchair at each end of it, small white side table.  East strip: two macrame cabanas against the
-  boundary wall beside the pool's beach lobe, white poufs; slatted timber bench before the
-  pavilion's east bay.  Roof: slatted table just south of the pergola (3 chairs a side + one at the
+  boundary wall beside the pool's beach lobe, white poufs; low slatted timber platform before the
+  pavilion's kitchen bay.  Roof: slatted table just south of the pergola (3 chairs a side + one at the
   west end); sofa east of the spa facing two round rope chairs at the east parapet, round tables.
-- 08_courtyard-aerial-night: concrete-top table with chamfered corners, teak chairs with woven
-  backs, umbrella over the table's north end and the lounge's south armchair; cabanas with white
-  floor cushions and rattan drum bases.
-- 10_courtyard-from-living-doors, 16_pool-toward-pavilion-dusk: cabana = 12-sided crochet/macrame
-  pyramid canopy (dense work with small holes, diamond lattice, solid bands), fringe, brass finial,
-  wood pole in a rattan drum; white floor-seat cushions; east wall ~1.8 m white stucco with a timber
-  lattice screen on the neighbour's side.  16 / 11 / 12: two rattan egg chairs + rattan side table
-  at the terrace's east end, facing the pool.
+- 08_courtyard-aerial-night, 21_courtyard-aerial-angle: concrete-top table with chamfered corners,
+  teak chairs with woven backs, umbrella over the table's pavilion end; cabanas with white floor
+  cushions and rattan drum bases; white boundary walls running on past the pavilion to the alley.
+- 10_courtyard-from-living-doors, 13 (cabana half), 16_pool-toward-pavilion-dusk: cabana = 12-sided
+  crochet / macrame cone (rise ~ radius, dense work with small holes, diamond lattice, solid bands),
+  fringe, brass finial, wood pole in a rattan drum; along the wall: floor chair with a rounded back +
+  flat cushion | drum | long cushion with two black / white print pillows | drum | floor chair; east
+  wall ~1.8 m white stucco with a timber lattice screen on the neighbour's side.
+- 11, 12, 16, 17: two honey-rattan tulip swivel chairs (drum base, bowl widening to the rim, sides
+  cut down to the seat) + rattan drum table on the grass at the terrace's east end, facing the pool.
 - 11_courtyard-pool-pavilion-day: dining table along the west wall (teak chairs, woven end chair,
   white slab pedestals) under the cantilever umbrella; white market umbrella over two teak sun
   loungers at the house end of the west side.  12_courtyard-house-rear-dusk: same, from the east.
 - 13_courtyard-lounge-dusk: teak-framed armchairs (white cushions, dark round / print pillows), white
-  oval pedestal coffee table with a succulent bowl, white sofa with black/white print pillows,
-  woven balloon-back chair at the table's north end.
-- 17_pool-beach-entry-day, 21_courtyard-aerial-angle: west boundary wall with planting in front of
-  it, deck and lounge along it; timber bench at the pavilion.
+  oval pedestal coffee table with a bronze succulent bowl, white sofa with black/white print pillows,
+  grey kubu-wicker balloon-back chair at the table's end.
+- 17_pool-beach-entry-day, 09: west boundary wall with planting in front of it, deck and lounge along
+  it; timber platform with two step lights across the pavilion's kitchen bay.
 - 18_rooftop-lounge, 19_rooftop-deck-view: teak / rope sofa, round woven-rope lounge chairs with
-  white cushions, round light-wood tables; long weathered-teak slatted table with rope armchairs.
+  white cushions, two nesting light-wood tables; long weathered-teak slatted table with rope armchairs.
 The layout follows the pool module's outline (blender/polish/pool.py, which runs later and replaces
 the base kidney pool): see pool_footprint() / spa_east_x().
 """
@@ -51,18 +53,22 @@ POLYHAVEN_ASSETS = ["teak_veneer"]      # furniture timber (diff/nor/rough 1k in
 COLL, ROOF = "Courtyard", "RoofDeck"
 TAU = 2 * math.pi
 
-# ---------------------------------------------------------------- boundary walls (11, 13, 16, 21)
-WALL = dict(y0=19.0, y1=31.3, h=1.8, t=0.25, cap_h=0.06, cap_over=0.03)
+# ---------------------------------------------------------------- boundary walls (08, 11, 13, 16, 21)
+# From the house's rear wall past the pavilion's sides to the alley (08, 21: the walls continue
+# beside the pavilion); the cap ends flush with the lot line.
+WALL = dict(y0=19.0, y1=38.37, h=1.8, t=0.25, cap_h=0.06, cap_over=0.03)
 LATTICE = dict(y0=21.0, y1=31.0, dx=0.34, h=0.62, tile=1.0, post=2.5)  # neighbour's side, clear of canopies
 
 # ---------------------------------------------------------------- west deck (08, 15, 16, 17)
 WDECK = dict(x0=1.45, x1_max=4.2, y0=19.0, y_terrace=21.6, y1=30.15, gap=0.1)   # top = terrace top
 # Plan positions from the top-down frame 15 (scaled on the pool's straight N / W walls), order from
-# the house: dining table (south of the umbrella) -> umbrella -> lounge (sofa on the west, two teak
-# armchairs, oval coffee table) -> planting at the pavilion's west bay.
-DINING = dict(x=2.8, y=24.1, length=2.6, width=0.95)        # long axis along y (08, 11, 15)
-DINING_SIDE_Y = (-0.85, 0.0, 0.85)                           # 3 teak chairs per side, woven chair at each end
-CANTILEVER = dict(pole=(1.82, 26.1), r=1.45, gap=0.1, z_edge=2.32, z_hub=2.78, z_arm=3.0)  # hub follows
+# the house: long dining table with the cantilever umbrella over its pavilion end (08, 13, 15) ->
+# lounge (sofa on the west, two teak armchairs, oval coffee table) -> planting at the pavilion's west bay.
+DINING = dict(x=2.8, y=24.0, length=3.0, width=0.95)        # long axis along y (08, 11, 15, 17)
+DINING_SIDE_Y = (-0.98, -0.33, 0.33, 0.98)                   # 4 teak chairs a side (08, 17), woven at the ends
+DINING_END_GAP = 0.31                                        # woven chair centre beyond the table end
+# frame 15: canopy centre ~(3.5, 25.15), reaching over the deck lights; pole west of it at ~(2.0, 26.0)
+CANTILEVER = dict(pole=(2.0, 26.05), aim=(3.4, 25.3), r=1.45, gap=0.25, z_edge=2.32, z_hub=2.78, z_arm=3.0)
 SOFA = dict(x_back=1.5, y0=26.9, y1=29.3)                    # straight 3-seater, back to the west bed
 COFFEE = (2.98, 27.85)
 ARMCHAIRS = [(3.0, 26.55, math.pi / 2), (3.25, 29.15, None)]  # x, y, facing (None: face the table)
@@ -77,15 +83,25 @@ EGG_TABLE = (12.94, 22.9, 0.18, 0.46)                        # x, y, r, h
 LOUNGERS = [(3.95, 20.35), (4.8, 20.35)]
 MARKET = dict(pole=(4.375, 20.3), r=1.2, z_edge=2.15, z_top=2.6)
 
-# ---------------------------------------------------------------- east side cabanas (10, 15, 16)
-# Canopy centres ~0.75 m off the wall (15: canopies reach over the wall cap); the cushion sets sit on
-# the grass strip between the pool's beach lobe and the wall.  Pots by the cabanas belong to planting.
-CABANAS = [(14.36, 24.15), (14.36, 27.25)]
-CABANA = dict(r=1.25, z_edge=1.97, z_top=2.95, fringe=0.3, sides=12)
-POUFS = [(13.55, 23.4), (13.4, 28.75)]
+# ---------------------------------------------------------------- east side cabanas (09, 10, 13, 15, 16)
+# Canopies ~2.3 m across, rise ~= radius (10, 13, 16), east edge just over the wall cap (15).
+# Order along the wall (13, 10, 12): [pot] floor chair + flat cushion | drum A | long cushion with two
+# print pillows | drum B | floor chair + flat cushion [pot], white pouf by B.  Frame 15 puts drum B
+# ~0.7 m house-side of the pool's east tip and A ~2.05 m beyond it (y ~25.35 / 28.1 on the pool
+# module's outline); the planting module's pots at y 25.55 / 28.75 / 29.75 (planting.py POTS) only
+# leave room for the pair below.  Once planting moves its pot at y 25.55 to ~24.0 and drops the one at
+# 28.75, set the y values to 25.35 / 28.1 and POUFS[1] to (13.3, 29.4) (critique.md, item 5).
+CABANAS = [(14.2, 24.25, -1), (14.2, 27.3, 1)]      # x, y, outer side (-1 house, +1 pavilion): B, A
+CABANA = dict(r=1.15, z_edge=1.88, z_top=3.0, fringe=0.28, sides=12, drum_r=0.29, drum_h=0.58)
+SEAT_X = 14.69              # floor-seat centre line, backs against the wall (inner face x 15.05)
+SEAT, SEAT_GAP = 0.62, 0.06  # square floor cushion size; gap to the drum
+LONG_SEAT = 1.05            # long floor cushion between the drums (A side)
+POUFS = [(13.0, 23.35), (13.5, 28.9)]
 
-# ---------------------------------------------------------------- pavilion bench (15, 17)
-BENCH = dict(x0=9.95, x1=13.1, depth=0.85, h=0.4)
+# ---------------------------------------------------------------- pavilion bench (09, 15, 17, 21)
+# Low slatted timber platform across the pavilion's kitchen bay, dark kick, two step lights (17).
+# West end kept clear of the planting module's pot at (9.6, 30.45).
+BENCH = dict(x0=9.95, x1=14.3, depth=0.85, h=0.33, lights=(1.1, 3.25))   # lights: x from x0
 
 # ---------------------------------------------------------------- roof deck (15, 18, 19)
 # Frame 15 (roof level ~110 px/m on a 2x crop): long table just south of the pergola, 3 chairs a
@@ -96,17 +112,20 @@ ROOF_DINING_DX = (-0.75, 0.0, 0.75)
 ROOF_SOFA = dict(y=17.6, length=2.0, depth=0.78, gap=0.06)   # back sits `gap` east of the spa
 ROOF_ROUND = dict(x=13.06, ys=(16.82, 18.22), scale=0.88)     # facing west
 ROOF_COFFEE = dict(y=17.55, r=0.27, h=0.36)
+ROOF_NEST = (12.3, 17.05, 0.22, 0.28)                         # lower nesting table (18): x, y, r, h
 ROOF_SIDE = (13.36, 17.52, 0.15, 0.46)                        # x, y, r, h
 
 # review close-ups: name -> (location, target, lens mm, matched video frame)
 CLOSEUPS = {
-    "yard_cabanas": ((8.6, 19.4, 1.75), (14.0, 26.0, 1.3), 30, "exterior/10_courtyard-from-living-doors.jpg"),
-    "yard_cabana_close": ((11.4, 21.9, 1.55), (14.0, 25.6, 1.7), 20, "exterior/16_pool-toward-pavilion-dusk.jpg"),
-    "yard_west": ((14.6, 21.0, 1.95), (7.5, 31.0, 0.7), 16, "exterior/17_pool-beach-entry-day.jpg"),
+    "yard_cabanas": ((8.6, 19.4, 1.75), (14.3, 26.0, 1.4), 34, "exterior/10_courtyard-from-living-doors.jpg"),
+    "yard_cabana_close": ((3.2, 29.2, 1.3), (14.3, 25.8, 1.45), 40, "exterior/13_courtyard-lounge-dusk.jpg"),
+    "yard_west": ((14.2, 21.6, 1.8), (7.0, 31.0, 0.6), 15, "exterior/17_pool-beach-entry-day.jpg"),
+    "yard_aerial21": ((17.0, 23.0, 12.0), (5.5, 29.0, 0.0), 18, "exterior/21_courtyard-aerial-angle.jpg"),
     "yard_terrace": ((13.6, 30.3, 1.6), (7.0, 20.0, 2.0), 16, "exterior/11_courtyard-pool-pavilion-day.jpg"),
-    "yard_lounge": ((2.35, 30.2, 1.6), (6.0, 21.5, 1.2), 17, "exterior/13_courtyard-lounge-dusk.jpg"),
-    "yard_dining": ((5.6, 28.2, 2.5), (2.6, 23.8, 0.5), 22, "exterior/08_courtyard-aerial-night.jpg"),
+    "yard_lounge": ((2.55, 29.95, 1.55), (6.2, 21.5, 1.2), 17, "exterior/13_courtyard-lounge-dusk.jpg"),
+    "yard_dining": ((8.4, 21.4, 7.2), (2.7, 25.6, 0.4), 24, "exterior/08_courtyard-aerial-night.jpg"),
     "yard_bench": ((11.4, 27.6, 1.6), (11.8, 30.7, 0.3), 24, "exterior/17_pool-beach-entry-day.jpg"),
+    "yard_egg": ((13.4, 25.9, 1.25), (12.9, 22.5, 0.55), 35, "exterior/11_courtyard-pool-pavilion-day.jpg"),
     "yard_sofa": ((4.9, 26.4, 2.0), (2.2, 28.4, 0.5), 24, "exterior/13_courtyard-lounge-dusk.jpg"),
     "yard_plan": ((7.65, 25.0, 40.0), (7.65, 25.0, 0.0), 50, "exterior/15_top-down-site-plan-night.jpg"),
     "yard_roof_lounge": ((12.9, 13.8, 8.3), (12.0, 17.6, 6.5), 16, "exterior/18_rooftop-lounge.jpg"),
@@ -273,6 +292,25 @@ def shell(mb, prof, open_fn, seg=32, thick=0.045, z_in=0.36, mat=0, M=None):
         mb.face((ot + k, ot + k + 1, it + k + 1, it + k), mat, None, True)
     mb.face(tuple(outer[0] + k for k in range(seg, -1, -1)), mat)       # base
     mb.face(tuple(inner[0] + k for k in range(seg + 1)), mat)           # seat deck
+
+
+def plane_cut(z_front, z_back, t_max=0.9):
+    """Opening half-angle for shell(): the rim is the plane through z_front (front) and z_back (back).
+
+    t_max < 1 stops short of the top so a rounded arc of back is left at the last ring."""
+    def f(z):
+        t = min(t_max, max(0.0, (z - z_front) / (z_back - z_front)))
+        return math.acos(1.0 - 2.0 * t)
+    return f
+
+
+def dense(prof, step=0.035):
+    """Resample an (r, z) profile so a fast-changing opening gets enough rings."""
+    out = [prof[0]]
+    for (ra, za), (rb, zb) in zip(prof, prof[1:]):
+        n = max(1, math.ceil((zb - za) / step))
+        out += [(ra + (rb - ra) * k / n, za + (zb - za) * k / n) for k in range(1, n + 1)]
+    return out
 
 
 def canopy(mb, R, z_edge, z_top, sides=8, rows=6, cols=6, droop=0.0, mat=0, top_t=0.96,
@@ -461,9 +499,9 @@ def materials(G):
     weave_rgb, weave_nrm = tex_weave()
     w_img = _image("yard_weave_diff", weave_rgb, True, True)
     n_img = _image("yard_weave_nor", weave_nrm, False, True)
-    for name, tint, rough in (("yard_rattan", (0.95, 0.80, 0.58), 0.75),
+    for name, tint, rough in (("yard_rattan", (1.45, 1.0, 0.56), 0.75),      # honey rattan (11, 16, 17)
                               ("yard_rope", (0.74, 0.70, 0.64), 0.85),
-                              ("yard_wicker", (0.80, 0.74, 0.66), 0.8)):
+                              ("yard_wicker", (0.8, 0.72, 0.6), 0.8)):        # grey kubu wicker (13)
         m = G.mat(name, tint, rough)
         n, l = m.node_tree.nodes, m.node_tree.links
         b = n["Principled BSDF"]
@@ -514,7 +552,8 @@ def materials(G):
     M["yard_wood_grey"] = G.mat("yard_wood_grey", (0.30, 0.25, 0.21), 0.8)
     M["yard_dark"] = G.mat("yard_dark", (0.10, 0.10, 0.11), 0.9)
     M["yard_taupe"] = G.mat("yard_taupe", (0.40, 0.35, 0.30), 0.9)
-    M["yard_ceramic"] = G.mat("yard_ceramic", (0.22, 0.20, 0.18), 0.45)
+    M["yard_ceramic"] = G.mat("yard_ceramic", (0.12, 0.10, 0.08), 0.45, 0.3)     # dark bronze bowls (13)
+    M["yard_succulent"] = G.mat("yard_succulent", (0.16, 0.22, 0.15), 0.7)    # dusty grey-green (13, 19)
     for k in ("stucco", "timber", "shrub", "wall_light"):
         M[k] = G.MAT[k]
     return M
@@ -593,7 +632,8 @@ def build_dining_table():
     for k in range(n):
         mb.face((i + k, i + (k + 1) % n, i + n + (k + 1) % n, i + n + k))
     for s in (-1, 1):
-        box(mb, -0.28, s * 0.62 - 0.09, 0.0, 0.28, s * 0.62 + 0.09, 0.7)
+        py = s * (L - 0.6)
+        box(mb, -0.28, py - 0.09, 0.0, 0.28, py + 0.09, 0.7)
     return mb
 
 
@@ -617,38 +657,45 @@ def build_dining_chair():
     return mb
 
 
-def build_tub(kind):
-    """Woven chair bodies with their cushions: "egg" (rattan, 11 / 16), "round" (rope, 18), "woven" (13)."""
-    mb = MB()          # 0 weave, 1 cushion, 2 accent pillow
+def build_round_chair():
+    """Wide woven-rope cuddle chair with white cushions and pillows (18)."""
+    mb = MB()          # 0 rope, 1 cushion, 2 accent pillow
 
-    def opening(a0, z0, z1, a1, z2):
-        """Half-angle: 0 below z0, eases to a0 by z1 (arm line), then widens by a1 up to z2 (back top)."""
-        def f(z):
-            t = min(1.0, max(0.0, (z - z0) / (z1 - z0)))
-            return math.radians(a0) * t * t * (3 - 2 * t) + math.radians(a1) * min(1.0, max(0.0, (z - z1) / (z2 - z1)))
-        return f
-    if kind == "egg":        # tall rattan egg / barrel swivel chair (11, 16, 17)
-        prof = [(0.27, 0.0), (0.30, 0.08), (0.37, 0.25), (0.41, 0.4), (0.43, 0.55), (0.43, 0.7),
-                (0.40, 0.85), (0.33, 0.98), (0.24, 1.06)]
-        op = opening(62, 0.36, 0.47, 40, 1.07)
-        z_in, seat_r, seat_z = 0.38, 0.36, 0.47
-        backs = [((-0.2, 0.0, 0.72), (0.08, 0.2, 0.17), 1)]
-    elif kind == "round":    # wide woven-rope cuddle chair (18)
-        prof = [(0.5, 0.0), (0.55, 0.1), (0.6, 0.28), (0.61, 0.45), (0.59, 0.62), (0.53, 0.76)]
-        op = opening(56, 0.3, 0.42, 22, 0.77)
-        z_in, seat_r, seat_z = 0.32, 0.53, 0.42
-        backs = [((-0.36, -0.2, 0.62), (0.09, 0.24, 0.19), 1), ((-0.36, 0.22, 0.62), (0.09, 0.24, 0.19), 1),
-                 ((-0.18, 0.05, 0.6), (0.07, 0.17, 0.15), 2)]
-    else:                    # "woven": high-back wicker dining chair (13)
-        prof = [(0.22, 0.0), (0.24, 0.15), (0.27, 0.42), (0.30, 0.62), (0.30, 0.8), (0.26, 0.95), (0.18, 1.02)]
-        op = opening(70, 0.42, 0.5, 22, 1.03)
-        z_in, seat_r, seat_z = 0.44, 0.22, 0.5
-        backs = []
-    shell(mb, prof, op, 32, 0.045, z_in, 0)
-    if seat_r:
-        blob(mb, (seat_r, seat_r, 0.07), T(0.02, 0, seat_z), 1, 0.8, 0.45, nu=20, nv=6)
-    for c, h, m in backs:
+    def opening(z):    # closed below the seat, arms at ~0.42 m, back widening to the rim
+        t = min(1.0, max(0.0, (z - 0.3) / 0.12))
+        return math.radians(56) * t * t * (3 - 2 * t) + math.radians(22) * min(1.0, max(0.0, (z - 0.42) / 0.35))
+    shell(mb, [(0.5, 0.0), (0.55, 0.1), (0.6, 0.28), (0.61, 0.45), (0.59, 0.62), (0.53, 0.76)], opening,
+          32, 0.045, 0.32, 0)
+    blob(mb, (0.53, 0.53, 0.07), T(0.02, 0, 0.42), 1, 0.8, 0.45, nu=20, nv=6)
+    for c, h, m in (((-0.36, -0.2, 0.62), (0.09, 0.24, 0.19), 1), ((-0.36, 0.22, 0.62), (0.09, 0.24, 0.19), 1),
+                    ((-0.18, 0.05, 0.6), (0.07, 0.17, 0.15), 2)):
         blob(mb, h, T(*c, ry=-0.3), m, 0.35, 0.5, nu=14, nv=6)
+    return mb
+
+
+def build_egg_chair():
+    """Rattan tulip / barrel swivel chair (11, 12, 16, 17): short woven drum base, a bowl that widens
+    upward to a ~0.8 m rim, back ~1.0 m high, sides cut down in one sweep to the seat at the front;
+    white seat cushion and square back pillow.  Front = +x."""
+    mb = MB()          # 0 rattan, 1 cushion
+    lathe(mb, [(0.25, 0.0), (0.27, 0.03), (0.275, 0.2), (0.265, 0.33), (0.2, 0.35)], 24, 0)
+    prof = dense([(0.265, 0.33), (0.30, 0.40), (0.35, 0.52), (0.39, 0.68), (0.405, 0.84), (0.40, 0.97),
+                  (0.385, 1.02)])
+    shell(mb, prof, plane_cut(0.45, 1.06, 0.9), 32, 0.04, 0.42, 0)
+    blob(mb, (0.3, 0.29, 0.075), T(0.04, 0, 0.5), 1, 0.8, 0.45, nu=20, nv=6)     # front edge proud of the rim
+    blob(mb, (0.075, 0.23, 0.21), T(-0.2, 0, 0.77, ry=-0.3), 1, 0.3, 0.5, nu=14, nv=6)
+    return mb
+
+
+def build_balloon_chair():
+    """Grey kubu-wicker balloon-back dining chair (13): flared pedestal skirt, seat at the waist, tall
+    rounded back, open front, white seat pad.  Front = +x."""
+    mb = MB()          # 0 wicker, 1 cushion
+    lathe(mb, [(0.25, 0.0), (0.245, 0.04), (0.18, 0.2), (0.165, 0.36), (0.12, 0.4)], 20, 0)
+    prof = dense([(0.17, 0.38), (0.22, 0.45), (0.265, 0.6), (0.29, 0.78), (0.285, 0.93), (0.24, 1.04),
+                  (0.16, 1.1)])
+    shell(mb, prof, plane_cut(0.5, 1.13, 0.86), 28, 0.035, 0.43, 0)
+    blob(mb, (0.21, 0.21, 0.04), T(0.02, 0, 0.47), 1, 0.8, 0.45, nu=18, nv=5)
     return mb
 
 
@@ -666,12 +713,19 @@ def build_pouf():
     return mb
 
 
-def build_cabana_cushions():
-    """White floor-seat cushions with backrests either side of the drum, in a row along the wall (08, 10)."""
+def build_floor_chair():
+    """Low white floor chair: square seat cushion and a rounded half-moon back (10, 13). Front = +x."""
     mb = MB()
-    for s in (-1, 1):
-        blob(mb, (0.33, 0.33, 0.08), T(0.0, s * 0.64, 0.08), 0, 0.15, 0.45)
-        blob(mb, (0.1, 0.32, 0.23), T(-0.27, s * 0.64, 0.32, ry=-0.3), 0, 0.2, 0.5)
+    h = SEAT / 2
+    blob(mb, (h, h, 0.075), T(0.0, 0, 0.075), 0, 0.15, 0.4)
+    blob(mb, (0.08, h - 0.02, 0.26), T(-h + 0.07, 0, 0.36, ry=-0.2), 0, 0.85, 0.55, nu=18, nv=8)
+    return mb
+
+
+def build_floor_cushion(length):
+    """Flat white floor cushion, `length` along local y (10, 13)."""
+    mb = MB()
+    blob(mb, (SEAT / 2, length / 2, 0.065), T(0, 0, 0.065), 0, 0.12, 0.35)
     return mb
 
 
@@ -702,10 +756,11 @@ def build_cabana_canopy(wall_dx=None, cap_dz=None):
 
 
 def cantilever_hub():
-    """Hub position: one canopy-apothem (+ gap) from the pole, toward the dining table (08, 15)."""
-    C, D = CANTILEVER, DINING
+    """Hub position: one canopy-apothem (+ gap) from the pole, toward the aim point over the dining
+    table's pavilion end (08, 13, 15)."""
+    C = CANTILEVER
     px, py = C["pole"]
-    ang = math.atan2(D["y"] + D["length"] / 2 - py, D["x"] + 0.2 - px)
+    ang = math.atan2(C["aim"][1] - py, C["aim"][0] - px)
     reach = C["r"] * math.cos(math.pi / 8) + C["gap"]
     return px + reach * math.cos(ang), py + reach * math.sin(ang), ang
 
@@ -816,9 +871,9 @@ def build_round_table(r, h):
 
 
 def build_bench():
-    """Slatted timber platform bench in front of the pavilion's east bay (15, 17)."""
+    """Low slatted timber platform across the pavilion's kitchen bay, dark kick, step lights (15, 17)."""
     B = BENCH
-    mb = MB()          # 0 timber, 1 dark kick
+    mb = MB()          # 0 timber, 1 dark kick, 2 light
     L, D, h = (B["x1"] - B["x0"]) / 2, B["depth"] / 2, B["h"]
     box(mb, -L + 0.06, -D + 0.06, 0.0, L - 0.06, D - 0.02, 0.08, 1)
     box(mb, -L, -D, 0.08, L, D, h - 0.045, 0)
@@ -826,6 +881,8 @@ def build_bench():
     sw = 2 * D / n
     for k in range(n):
         box(mb, -L, -D + k * sw + 0.006, h - 0.045, L, -D + (k + 1) * sw - 0.006, h, 0)
+    for lx in B["lights"]:
+        box(mb, -L + lx - 0.05, -D - 0.006, 0.13, -L + lx + 0.05, -D + 0.01, 0.17, 2)
     return mb
 
 
@@ -991,7 +1048,8 @@ def build_west_deck(G, kit, z, pool):
 def build_west_lounge(G, kit, z):
     D = DINING
     kit.put("Yard_dining_table", "dining_table", build_dining_table, ["yard_concrete"], D["x"], D["y"], z)
-    kit.put("Yard_dining_bowl", "bowl", build_bowl, ["yard_ceramic", "shrub"], D["x"], D["y"] + 0.3, z + 0.76)
+    bowl = ["yard_ceramic", "yard_succulent"]
+    kit.put("Yard_dining_bowl", "bowl", build_bowl, bowl, D["x"], D["y"] + 0.3, z + 0.76)
     k = 0
     for side, fx in ((-1, 0.0), (1, math.pi)):
         for dy in DINING_SIDE_Y:
@@ -1000,8 +1058,8 @@ def build_west_lounge(G, kit, z):
                     D["x"] + side * (D["width"] / 2 + 0.24), D["y"] + dy, z, fx)
             k += 1
     for i, (s, f) in enumerate(((-1, math.pi / 2), (1, -math.pi / 2))):
-        kit.put(f"Yard_dining_woven_{i}", "woven", lambda: build_tub("woven"), ["yard_wicker", "yard_cushion"],
-                D["x"], D["y"] + s * (D["length"] / 2 + 0.33), z, f)
+        kit.put(f"Yard_dining_woven_{i}", "woven", build_balloon_chair, ["yard_wicker", "yard_cushion"],
+                D["x"], D["y"] + s * (D["length"] / 2 + DINING_END_GAP), z, f)
     hx, hy, _ = cantilever_hub()
     kit.put("Umbrella_cantilever", "cantilever", build_cantilever, ["yard_canvas", "yard_metal"], hx, hy, z)
     # lounge: sofa with its back to the west planting, oval coffee table, two teak armchairs (08, 13, 15)
@@ -1013,7 +1071,7 @@ def build_west_lounge(G, kit, z):
         kit.put(f"Lounge_pillow_{i}", f"pillow_{key}", build_pillow,
                 ["yard_print" if key == "print" else "yard_cushion"], sx - 0.1, sy + dy, z + 0.64, rz)
     kit.put("Lounge_coffee_table", "oval_table", build_oval_table, ["yard_white"], COFFEE[0], COFFEE[1], z)
-    kit.put("Lounge_bowl", "bowl", build_bowl, ["yard_ceramic", "shrub"], COFFEE[0], COFFEE[1] + 0.1, z + 0.41)
+    kit.put("Lounge_bowl", "bowl", build_bowl, bowl, COFFEE[0], COFFEE[1] + 0.1, z + 0.41)
     for i, (x, y, f) in enumerate(ARMCHAIRS):
         f = math.atan2(COFFEE[1] - y, COFFEE[0] - x) if f is None else f
         kit.put(f"Lounge_armchair_{i}", "armchair", build_armchair,
@@ -1024,11 +1082,12 @@ def build_west_lounge(G, kit, z):
 
 def build_terrace(G, kit, z, turf_z):
     for i, (x, y) in enumerate(EGG_CHAIRS):
-        kit.put(f"Yard_egg_chair_{i}", "egg", lambda: build_tub("egg"),
-                ["yard_rattan", "yard_cushion", "yard_print"], x, y, turf_z, math.pi / 2 + (0.2 if i else -0.2))
+        kit.put(f"Yard_egg_chair_{i}", "egg", build_egg_chair, ["yard_rattan", "yard_cushion"], x, y, turf_z,
+                math.pi / 2 + (0.2 if i else -0.2))
     x, y, r, h = EGG_TABLE
     kit.put("Yard_egg_table", "drum_small", lambda: build_drum(r, h), ["yard_rattan"], x, y, turf_z)
-    kit.put("Yard_egg_table_bowl", "bowl", build_bowl, ["yard_ceramic", "shrub"], x, y, turf_z + h, scale=0.65)
+    kit.put("Yard_egg_table_bowl", "bowl", build_bowl, ["yard_ceramic", "yard_succulent"], x, y, turf_z + h,
+            scale=0.65)
     for i, (x, y) in enumerate(LOUNGERS):
         kit.put(f"Yard_lounger_{i}", "lounger", build_lounger, ["yard_teak", "yard_cushion"], x, y, z,
                 math.pi / 2)
@@ -1037,17 +1096,31 @@ def build_terrace(G, kit, z, turf_z):
 
 
 def build_cabanas(G, kit, z):
-    W = WALL
-    for i, (x, y) in enumerate(CABANAS):     # same x for both, so the clipped canopy mesh is shared
+    """Two macrame cabanas against the east wall with their floor seating (09, 10, 12, 13, 15, 16)."""
+    W, C = WALL, CABANA
+    pillow = ["yard_print"]
+    for i, (x, y, out) in enumerate(CABANAS):     # same x for both, so the clipped canopy mesh is shared
         wall_dx, cap_dz = G.LOT["w"] - W["t"] - x, W["h"] + W["cap_h"] - z
         kit.put(f"Cabana_{i}_canopy", "cabana_canopy", lambda: build_cabana_canopy(wall_dx, cap_dz),
                 ["yard_macrame", "yard_fringe"], x, y, z, 0.0)
         kit.put(f"Cabana_{i}_frame", "cabana_frame", build_cabana_frame, ["yard_wood", "yard_brass"], x, y, z)
-        kit.put(f"Cabana_{i}_drum", "drum", build_drum, ["yard_rattan"], x, y, z)
-        kit.put(f"Cabana_{i}_cushions", "cabana_cushions", build_cabana_cushions, ["yard_cushion"],
-                x, y, z, math.pi + (0.04 if i else -0.04))
-        kit.put(f"Cabana_{i}_pillow", "pillow_print", build_pillow, ["yard_print"],
-                x + 0.2, y + (0.62 if i else -0.62), z + 0.36, math.pi)
+        kit.put(f"Cabana_{i}_drum", "cabana_drum", lambda: build_drum(C["drum_r"], C["drum_h"]), ["yard_rattan"],
+                x, y, z)
+        # outer side: rounded-back floor chair against the wall, flat cushion in front of it (10, 13)
+        oy = y + out * (C["drum_r"] + SEAT_GAP + SEAT / 2)
+        kit.put(f"Cabana_{i}_chair", "floor_chair", build_floor_chair, ["yard_cushion"], SEAT_X, oy, z,
+                math.pi + 0.05 * out)
+        kit.put(f"Cabana_{i}_seat_front", "floor_seat", lambda: build_floor_cushion(SEAT), ["yard_cushion"],
+                SEAT_X - SEAT - 0.02, oy + 0.06 * out, z, math.pi - 0.1 * out)
+        # inner side, toward the other drum: long cushion with two print pillows (A), short one (B)
+        length = LONG_SEAT if out > 0 else SEAT
+        iy = y - out * (C["drum_r"] + SEAT_GAP + length / 2)
+        kit.put(f"Cabana_{i}_seat_inner", f"floor_seat_{length:.2f}", lambda: build_floor_cushion(length),
+                ["yard_cushion"], SEAT_X, iy, z, math.pi)
+        dys = (-0.25, 0.25) if out > 0 else (0.0,)
+        for k, dy in enumerate(dys):
+            kit.put(f"Cabana_{i}_pillow_{k}", "pillow_print", build_pillow, pillow, SEAT_X + 0.2, iy + dy,
+                    z + 0.33, math.pi + (0.12 if k else -0.1))
     for i, (x, y) in enumerate(POUFS):
         kit.put(f"Yard_pouf_{i}", "pouf", build_pouf, ["yard_cushion"], x, y, z)
 
@@ -1055,8 +1128,8 @@ def build_cabanas(G, kit, z):
 def build_bench_obj(G, kit):
     B = BENCH
     P = G.PAVILION
-    kit.put("Pavilion_bench", "bench", build_bench, ["timber", "yard_dark"], (B["x0"] + B["x1"]) / 2,
-            P["y0"] - B["depth"] / 2, 0.0)
+    kit.put("Pavilion_bench", "bench", build_bench, ["timber", "yard_dark", "wall_light"],
+            (B["x0"] + B["x1"]) / 2, P["y0"] - B["depth"] / 2, 0.0)
 
 
 def spa_east_x(G):
@@ -1076,8 +1149,8 @@ def build_roof(G, kit):
     kit.put("Yard_roof_table", "roof_table", build_roof_table, ["yard_teak_grey"], R["x"], R["y"], z,
             math.pi / 2, ROOF)
     for i, dx in enumerate((-0.45, 0.35)):
-        kit.put(f"Yard_roof_bowl_{i}", "bowl", build_bowl, ["yard_ceramic", "shrub"], R["x"] + dx, R["y"] + 0.05,
-                z + 0.775, coll=ROOF, scale=0.8 if i else 1.0)
+        kit.put(f"Yard_roof_bowl_{i}", "bowl", build_bowl, ["yard_ceramic", "yard_succulent"], R["x"] + dx,
+                R["y"] + 0.05, z + 0.775, coll=ROOF, scale=0.8 if i else 1.0)
     k = 0
     for dx in ROOF_DINING_DX:
         for s, f in ((-1, math.pi / 2), (1, -math.pi / 2)):
@@ -1091,11 +1164,13 @@ def build_roof(G, kit):
     kit.put("Yard_roof_sofa", "roof_sofa", build_roof_sofa, ["yard_teak_grey", "yard_rope", "yard_cushion",
                                                               "yard_taupe"], sx, S["y"], z, 0.0, ROOF)
     for i, y in enumerate(C["ys"]):
-        kit.put(f"Yard_roof_round_chair_{i}", "round", lambda: build_tub("round"),
+        kit.put(f"Yard_roof_round_chair_{i}", "round", build_round_chair,
                 ["yard_rope", "yard_cushion", "yard_taupe"], C["x"], y, z, math.pi, ROOF, C["scale"])
     qx = (sx + S["depth"] / 2 + C["x"] - 0.62 * C["scale"]) / 2     # midway between sofa front and chairs
     kit.put("Yard_roof_coffee", "roof_coffee", lambda: build_round_table(Q["r"], Q["h"]), ["yard_oak"],
             qx, Q["y"], z, 0.0, ROOF)
+    x, y, r, h = ROOF_NEST
+    kit.put("Yard_roof_coffee_low", "roof_nest", lambda: build_round_table(r, h), ["yard_oak"], x, y, z, 0.0, ROOF)
     x, y, r, h = ROOF_SIDE
     kit.put("Yard_roof_side_table", "roof_side", lambda: build_round_table(r, h), ["yard_oak"], x, y, z, 0.0, ROOF)
 

@@ -1,25 +1,37 @@
 """Charred-wood tower + white stair bulkhead (polish module "tower"; owns Tower*, Bulkhead*).
 
 What the video shows (frames/exterior/...):
-- 04 close-up: narrow (~14 cm) vertical shou-sugi-ban boards with dark cathedral grain, thin black
-  gaps, staggered butt joints; a flashing cap at the flat top; a thick black-ringed porthole with
-  recessed glass.
-- 05 / 06 street views: two dark faces meet in a convex corner. The left face is angled (~45 deg,
-  facing south-west) and carries the porthole just below the hip-roof eave; the right (south) face
-  has a tall narrow stair window near its east end; a white chimney stack rises at that end.
-- 14 / 22 / 01 aerials: the tower stands on the lower front roofs, its SW face runs from the hip-roof
-  wing's front wall to the south face, the porthole is centred on the SW face, and the white bulkhead
-  behind it shares the same flat roof (white rounded coping visible behind the dark cap).
-- 15 top-down: tower + bulkhead form one outline - a prow pointing west/front, a straight east wall
-  flush with the roof-deck turf, and a flattened round end toward the pool ~62 % of the house depth.
-- 20 rooftop: bulkhead in white stucco, thick rounded coping, grey membrane roof, black-framed glass
-  door on the east side just before the rounded end.
+- 04 close-up: ~14 cm vertical shou-sugi-ban boards (about 19 across the porthole face) with thin
+  dark cathedral grain on a warm grey char, black gaps, only occasional butt joints; a projecting
+  bronze-grey band whose top sits ~0.35 m below the tower top, boards continuing above it; the
+  porthole is a thick rounded black bead, a thin light reveal and pale sky-mirroring glass.
+- 05 / 06 street views: two dark faces meet in a convex corner. The left face (facing south-west,
+  ~44 deg) carries the porthole with its top at the hip-roof eave; the right (south) face has a tall
+  narrow stair window whose top is a little above the porthole's; a white chimney with a cross-shaped
+  crown (a cap band level with the tower band, a narrower flue up to the tower top) stands at the
+  south face's east end.
+- 14 / 22 aerials: the south face is flush with the roof-deck block and the lower front roofs run in
+  front of its base; the porthole is ~0.38 of the SW face's width, centred; the top reads white from
+  above (coping + membrane) and the band end projects past the prow corner.
+- 15 top-down: tower + bulkhead form one outline - a prow whose SW and NW faces are about equal and
+  square to each other, straight bulkhead walls the width of the south face, and a flattened round
+  end toward the spa ~55 % of the way back along the deck block.
+- 20 rooftop: bulkhead in white stucco, thick rounded coping, grey membrane roof, black-framed door
+  on the east wall just before the rounded end.
 
-Geometry is built directly (no modifiers): a backing shell, individual board meshes with real gaps
-(one joined mesh), sweeps for the cap / coping, and explicit porthole, window and door assemblies.
-The cladding texture is generated here (procedural cathedral growth rings + Poly Haven veneer micro
-detail) into packed JPEG images, so it renders in Cycles and exports to glTF as plain image textures.
-After building, G.TOWER / G.BULKHEAD are updated to the new footprint for modules that run later.
+Placement (house_fronts(), measured at upper-storey height): the prow tip sits on the hip-roof
+wing's front wall, the south face on the roof-deck block's front wall, the bulkhead east wall on the
+turf edge. The video has the wing's upper storey set back ~1.8 m behind the block; the base model has
+both at y 7.0, so until the wing is set back the tower stands PROW_DEPTH in front of the block over
+the lower roofs (and the wing's upstairs window runs into the SW face: Tower_wing_window_jamb gives
+it a frame there). Owned Tower_flashing seals every wall/roof junction it finds by ray casting,
+wherever the roofs end up.
+
+Geometry is built directly (no modifiers): backing shells, individual board meshes with real gaps
+(one joined mesh, dark end grain at the butt joints), sweeps for band / caps / coping, and explicit
+porthole, window and door assemblies. The cladding texture is generated here (procedural cathedral
+growth rings + Poly Haven veneer micro detail) into packed JPEG images, so it renders in Cycles and
+exports to glTF as plain image textures.
 """
 import math
 import os
@@ -31,17 +43,13 @@ import numpy as np
 POLYHAVEN_ASSETS = ["black_oak_veneer"]   # micro grain blended into the generated cladding maps
 
 # ---------------------------------------------------------------- plan (metres, see docstring)
-EAST_X = 8.9           # south face east end = bulkhead east wall (roof-deck turf starts at x 9.0)
-WEST_X = 6.45          # south face west end = bulkhead west wall -> 2.45 m wide (frames 05, 14, 15)
-PROW_DX = 1.75         # prow vertex lies this far west of the south-west corner (frames 15, 22)
-PROW_DEPTH = 1.5       # ...and at least this far behind the south face (frame 15: ~1.5-2.0)
-REAR_FROM_FRONT = 7.2  # rounded end, measured from the deck block's front wall (frame 15: ~60 %)
-REAR_DEPTH = 0.75      # the round end is a flattened half-ellipse (frames 15, 20)
+SOUTH_W = 2.3          # S face = bulkhead width, west from the turf edge (DECK x0): frame 05 ~2.1,
+                       # frame 15 ~0.49 of the turf width beside it, frame 22 / 06 SW:S ~1.15-1.3
+PROW_DX = 1.9          # prow tip this far west of the SW corner ...
+PROW_DEPTH = 1.8       # ... and this far behind the S face: SW face 2.62 m at ~43 deg (04, 14, 15)
+REAR_FROM_BLOCK = 6.4  # round-end tip behind the deck block's front wall (frame 15: ~2.7x SOUTH_W)
+REAR_DEPTH = 0.85      # flattened half-ellipse round end (frame 15: ~0.74 of the half-width)
 ARC_SEG = 24
-# The prow vertex sits on the hip-roof wing's front wall and the south face is flush with the
-# roof-deck block's front (frames 14, 15, 22). The base model has both fronts at y 7.0, so there the
-# tower stands PROW_DEPTH proud of the facade over the lower roofs; if another module sets the wing
-# back, the layout follows it (see house_fronts()).
 
 # ---------------------------------------------------------------- heights
 Z_BASE = 3.2           # top of the single-storey front projection the tower stands on
@@ -49,33 +57,44 @@ ROOF_Z = 6.2           # main roof / roof-deck level (bulkhead walls start here)
 TOP = 9.2              # flat top of tower + bulkhead, 3 m above the deck (frames 05, 06, 14)
 PAR_W = 0.22           # parapet / coping width
 MEMB_Z = TOP - 0.2     # membrane roof inside the parapet (frame 20)
-CAP_H = 0.30           # flashing cap band on the clad faces (frame 04)
-CAP_OUT = 0.035        # cap projection beyond the board face
+BAND_Z = (TOP - 0.65, TOP - 0.35)   # bronze band: boards continue above it (frames 04, 14, 22)
+BAND_OUT = 0.06        # band projection beyond the board face
 
 # ---------------------------------------------------------------- cladding
 BOARD_PITCH = 0.14     # board width incl. gap (frame 04: ~14 cm boards)
 BOARD_GAP = 0.008
 BOARD_T = 0.022        # board thickness proud of the backing
-SEG_MAX = 2.5          # longest board before a butt joint
+SEG_MAX = 4.8          # longest board before a butt joint (at most one joint per board) ...
+JOINT_SKIP = 0.5       # ... and about half the boards run full height (frame 04)
+JOINT_GAP = 0.001
 TEX_W, TEX_H = 1024, 512  # generated cladding maps: columns run along the grain, rows across boards
 TEX_STRIPS = 8         # the rows hold 8 independent board-width strips
 TEX_MARGIN = 2         # texels kept clear at each strip edge
 TEX_ALONG = 2.8        # metres of grain along one texture width
-CHAR_RGB = (0.036, 0.035, 0.035)   # linear albedo of the brushed char (rings darken it)
+CHAR_RGB = (0.036, 0.032, 0.027)   # linear albedo of the brushed char: warm grey (frame 04)
 
 # ---------------------------------------------------------------- openings
 PORTHOLE_Z = 5.5       # centre height: top just under the wing's eave (frames 05, 06, 22)
-PORTHOLE_R_OUT = 0.55  # black frame ring outer radius (~1.1 m overall, frames 04, 22)
-PORTHOLE_R_IN = 0.45   # glass radius
-PORTHOLE_R_CUT = 0.50  # boards stop here (hidden under the ring)
-PORTHOLE_DEPTH = 0.20  # glass recess behind the board face ("deep reveal")
-RING_PROUD = 0.045
-PORTHOLE_S = 0.53      # position along the SW face (0 = prow, 1 = south corner)
-WINDOW_BOARDS = (8, 12)  # tall stair window: board columns (of 18) on the south face, 44-67 % across
-WINDOW_Z = (4.3, 6.55)   # (frames 05, 06, 14)
+PORTHOLE_R_OUT = 0.53  # bead outer radius: ~1.06 m overall, ~0.4 of the SW face (04, 05, 14, 22)
+BEAD_R = 0.05          # rounded black bead, half-torus standing BEAD_R proud (frame 04)
+PORTHOLE_R_IN = PORTHOLE_R_OUT - 2 * BEAD_R   # reveal / glass radius
+PORTHOLE_R_CUT = PORTHOLE_R_OUT - BEAD_R      # boards stop here (hidden under the bead)
+PORTHOLE_DEPTH = 0.06  # glass recess behind the backing plane: only a thin reveal shows (frame 04)
+PORTHOLE_S = 0.53      # position along the SW face (0 = prow tip, 1 = south corner)
+WINDOW_FRAC = (0.46, 0.68)  # tall stair window across the S face, snapped to board columns (05, 06)
+WINDOW_Z = (4.1, 6.25)      # top a little above the porthole top, slot runs down to the roof (05, 06)
 DOOR_W, DOOR_GAP = 0.9, 0.35  # bulkhead door on the east wall, just before the round end (frame 20)
-DOOR_Z = (ROOF_Z + 0.02, ROOF_Z + 2.15)
-CHIMNEY_W = 0.34       # white stack at the south face's east end (frames 05, 06, 14, 22)
+DOOR_Z = (ROOF_Z + 0.07, ROOF_Z + 2.4)   # threshold above the turf; ~0.5 m of wall over the head
+CHIMNEY_W = 0.32       # white stack at the S face's east end (frames 05, 06, 14, 22) ...
+CHIMNEY_FRONT = 0.30   # ... standing this far proud of the S face, 0.5 m deep
+CHIMNEY_CAP = (BAND_Z[0] - 0.05, BAND_Z[1] + 0.01, 0.07)  # crown band z0, z1, overhang (in line with the band)
+CHIMNEY_FLUE = 0.22    # flue width; its top is level with TOP (frame 14)
+
+# ---------------------------------------------------------------- flashing
+FLASH_H = 0.12         # metal upstand where a roof meets a tower / bulkhead wall
+FLASH_STEP = 0.08      # sampling step along the wall
+ROOF_TARGETS = ("Roof_", "House_front_projection")
+RAY_STOP = ("House_", "Deck_", "Spa", "Front_", "Rear_", "Pergola", "BBQ")
 
 
 def apply(G):
@@ -85,83 +104,83 @@ def apply(G):
 
     materials(G)
     wing_y, block_y = house_fronts(G)
+    east_x = G.DECK["x0"]
+    west_x = east_x - SOUTH_W
     front_y = min(block_y, wing_y - PROW_DEPTH)
-    rear_y = block_y + REAR_FROM_FRONT
-    V1 = (WEST_X - PROW_DX, wing_y)
-    V2 = (WEST_X, front_y)
-    V3 = (EAST_X, front_y)
-    sw = (V2[0] - V1[0], V2[1] - V1[1])
-    V4 = (WEST_X, V1[1] + (WEST_X - V1[0]) * (-sw[0] / sw[1]))   # NW face square to the SW face
-    cy = rear_y - REAR_DEPTH
-    cx, ax = (WEST_X + EAST_X) / 2, (EAST_X - WEST_X) / 2
+    rear_y = block_y + REAR_FROM_BLOCK
+    V1 = (west_x - PROW_DX, front_y + PROW_DEPTH)          # prow tip
+    V2 = (west_x, front_y)
+    V3 = (east_x, front_y)
+    V4 = (west_x, V1[1] + PROW_DX * PROW_DX / PROW_DEPTH)   # NW face square to the SW face
+    cy = max(rear_y - REAR_DEPTH, V4[1] + 0.5)
+    cx, ax = (west_x + east_x) / 2, (east_x - west_x) / 2
     arc = [(cx + ax * math.cos(math.pi * i / ARC_SEG), cy + REAR_DEPTH * math.sin(math.pi * i / ARC_SEG))
            for i in range(ARC_SEG + 1)]
-    # closed CCW outline (outward normal = right-hand side of each edge)
-    outline = [V2, V3, (EAST_X, block_y)] + arc + [V4, V1]
+    # closed CCW outline; each point carries the tag of the edge that starts there
+    ring = [(V2, "S")]
+    ring += [(V3, "E"), ((east_x, block_y), "EAST")] if block_y - front_y > 0.05 else [(V3, "EAST")]
+    ring += [(p, "ARC") for p in arc[:-1]] + [(arc[-1], "WEST"), (V4, "NW"), (V1, "SW")]
+    outline = [p for p, _ in ring]
     n_out = len(outline)
-    iV2, iV3, iE7 = 0, 1, 2
-    iV4, iV1 = n_out - 2, n_out - 1
+    nw_z0 = Z_BASE if V1[1] < wing_y - 0.05 else ROOF_Z - 0.1   # NW face hidden in the wing below
+    faces = []
+    for i, (a, tag) in enumerate(ring):
+        b = outline[(i + 1) % n_out]
+        faces.append(dict(a=a, b=b, L=math.dist(a, b), tag=tag, clad=tag in ("NW", "SW", "S"),
+                          z0={"S": Z_BASE, "SW": Z_BASE, "E": Z_BASE, "NW": nw_z0}.get(tag, ROOF_Z)))
+    F = {f["tag"]: f for f in faces if f["tag"] != "ARC"}
+    for i, f in enumerate(faces):   # outer board faces meet at the convex clad corners
+        prv, nxt = faces[i - 1], faces[(i + 1) % n_out]
+        f["ext0"] = miter_ext(prv, f) if f["clad"] and prv["clad"] else 0.0
+        f["ext1"] = miter_ext(f, nxt) if f["clad"] and nxt["clad"] else 0.0
 
-    # --- backing / walls: one quad strip per outline edge, with holes for openings
-    clad = {(iV4, iV1): "NW", (iV1, iV2): "SW", (iV2, iV3): "S"}
-    faces_info = {}
-    for i in range(n_out):
-        a, b = outline[i], outline[(i + 1) % n_out]
-        key = (i, (i + 1) % n_out)
-        L = math.dist(a, b)
-        name = clad.get(key)
-        if name:
-            z0 = ROOF_Z - 0.1 if name == "NW" else Z_BASE
-        else:
-            z0 = Z_BASE if key == (iV3, iE7) else ROOF_Z
-        faces_info[key] = dict(a=a, b=b, L=L, z0=z0, name=name)
-
-    S = faces_info[(iV2, iV3)]
-    SW = faces_info[(iV1, iV2)]
+    S, SW, EAST = F["S"], F["SW"], F["EAST"]
     n_s = round(S["L"] / BOARD_PITCH)
     p_s = S["L"] / n_s
-    win = (WINDOW_BOARDS[0] * p_s, WINDOW_BOARDS[1] * p_s, *WINDOW_Z)
+    win = (round(WINDOW_FRAC[0] * n_s) * p_s, round(WINDOW_FRAC[1] * n_s) * p_s, *WINDOW_Z)
     S["holes"] = [win]
     sc = SW["L"] * PORTHOLE_S
     SW["holes"] = [(sc - PORTHOLE_R_OUT, sc + PORTHOLE_R_OUT,
                     PORTHOLE_Z - PORTHOLE_R_OUT, PORTHOLE_Z + PORTHOLE_R_OUT)]
-    door_face = faces_info[(iE7, iE7 + 1)]
-    d1 = door_face["L"] - DOOR_GAP
+    d1 = EAST["L"] - DOOR_GAP
     door = (d1 - DOOR_W, d1, *DOOR_Z)
-    door_face["holes"] = [door]
+    EAST["holes"] = [door]
 
+    # roofs meeting the walls: measured before any of this module's geometry exists
+    flash = [(f, roof_line(G, f)) for f in faces if f["tag"] != "ARC"]
+
+    # --- backing / walls: one quad strip per outline edge, with holes for openings
     wall_top = TOP - 0.06
     stucco_v, stucco_f, back_v, back_f = [], [], [], []
-    for key, f in faces_info.items():
-        tgt = (back_v, back_f) if f["name"] else (stucco_v, stucco_f)
-        wall_grid(tgt, f, f["z0"], wall_top, f.get("holes", []))
+    for f in faces:
+        tgt = (back_v, back_f) if f["clad"] else (stucco_v, stucco_f)
+        wall_grid(tgt, f, f["z0"], TOP - 0.01 if f["clad"] else wall_top, f.get("holes", []))
     walls = G.mesh("Bulkhead_walls", stucco_v, stucco_f, "stucco", "House")
     smooth_by_angle(walls, 35)
     G.mesh("Tower_backing", back_v, back_f, "tower_backing", "House")
 
-    # --- boards
-    bv, bf, buv = [], [], []
-    for (i, j), f in faces_info.items():
-        if not f["name"]:
-            continue
-        prev_key = ((i - 1) % n_out, i)
-        next_key = (j, (j + 1) % n_out)
-        f["ext0"] = miter_ext(faces_info, prev_key, (i, j)) if faces_info[prev_key]["name"] else 0.0
-        f["ext1"] = miter_ext(faces_info, (i, j), next_key) if faces_info[next_key]["name"] else 0.0
-    for key in ((iV4, iV1), (iV1, iV2), (iV2, iV3)):
-        f = faces_info[key]
-        circle = (sc, PORTHOLE_Z, PORTHOLE_R_CUT) if f["name"] == "SW" else None
-        rect = win if f["name"] == "S" else None
-        boards_on_face(bv, bf, buv, f, rnd, circle, rect)
+    # --- boards (joint / cut end grain on a second, near-black material slot)
+    bv, bf, buv, bm = [], [], [], []
+    for f in (F["NW"], SW, S):
+        circle = (sc, PORTHOLE_Z, PORTHOLE_R_CUT) if f is SW else None
+        rect = win if f is S else None
+        boards_on_face(bv, bf, buv, bm, f, rnd, circle, rect)
     boards = G.mesh("Tower_boards", bv, bf, "tower_cladding", "House")
+    boards.data.materials.append(G.MAT["tower_backing"])
+    boards.data.polygons.foreach_set("material_index", bm)
     set_uvs(boards, buv)
 
-    # --- flashing cap over the clad faces, coping + membrane roof
-    cap_path = [V4, V1, V2, V3]
-    cap_prof = [(BOARD_T - 0.004, TOP - CAP_H), (BOARD_T + CAP_OUT, TOP - CAP_H),
-                (BOARD_T + CAP_OUT, TOP + 0.012), (-PAR_W - 0.004, TOP + 0.012)]
-    v, f_ = sweep(cap_path, False, cap_prof)
-    G.mesh("Tower_cap", v, f_, "tower_cap", "House")
+    # --- band, white top over the clad faces, rounded coping over the stucco walls, membrane
+    i4, i3 = outline.index(V4), outline.index(V3)
+    clad_path = [V4, V1, V2, V3]
+    b0, b1 = BAND_Z
+    bo = BOARD_T + BAND_OUT
+    band_prof = [(BOARD_T - 0.004, b0), (bo, b0), (bo, b1 - 0.012), (bo - 0.015, b1), (BOARD_T - 0.004, b1)]
+    v, f_ = sweep(clad_path, band_prof, prev=outline[i4 - 1])     # dies into the west wall at V4
+    G.mesh("Tower_band", v, f_, "tower_band", "House")
+    top_prof = [(BOARD_T + 0.003, TOP - 0.008), (BOARD_T + 0.003, TOP), (-PAR_W, TOP), (-PAR_W, MEMB_Z)]
+    v, f_ = sweep(clad_path, top_prof, prev=outline[i4 - 1], nxt=outline[i3 + 1])
+    G.mesh("Tower_top", v, f_, "stucco", "House")
     r = 0.07
     cop_prof = [(0.0, wall_top), (0.022, wall_top), (0.022, TOP - 0.035)]
     cop_prof += [(0.022 - r + r * math.cos(a), TOP - r + r * math.sin(a))
@@ -169,65 +188,77 @@ def apply(G):
     cop_prof += [(-PAR_W + r - r * math.cos(math.radians(d)), TOP - r + r * math.sin(math.radians(d)))
                  for d in (90, 60, 30)]
     cop_prof += [(-PAR_W, TOP - 0.05), (-PAR_W, MEMB_Z)]
-    v, f_ = sweep(outline, True, cop_prof)
+    v, f_ = sweep(outline[i3:i4 + 1], cop_prof, prev=V2, nxt=V1)
     coping = G.mesh("Bulkhead_coping", v, f_, "stucco", "House")
     smooth_by_angle(coping, 35)
     miters = miter_vectors(outline, True)
     memb = [(x + mx * -PAR_W, y + my * -PAR_W, MEMB_Z) for (x, y), (mx, my) in zip(outline, miters)]
     G.mesh("Bulkhead_roof", memb, [tuple(range(len(memb)))], "bulkhead_membrane", "House")
 
-    # --- porthole: black ring, deep reveal, recessed glass, flange closing the backing hole
+    # --- porthole: rounded black bead, light reveal, recessed pale glass
     porthole(G, SW, sc)
-    # --- tall stair window on the south face
-    rect_opening(G, "Tower_window", S, win, BOARD_T + 0.03, -0.12, 0.05)
+    # --- tall stair window on the south face (warm interior read through the glass)
+    rect_opening(G, "Tower_window", S, win, BOARD_T + 0.03, -0.08, 0.05, pane="tower_window_glass")
     # --- bulkhead door (east wall)
-    rect_opening(G, "Bulkhead_door", door_face, door, 0.03, -0.06, 0.05, pane="bulkhead_door_leaf")
+    rect_opening(G, "Bulkhead_door", EAST, door, 0.03, -0.06, 0.05, pane="bulkhead_door_leaf", handle=True)
+    # --- metal flashing along every roof / wall junction
+    flashing(G, flash)
+    # --- black jamb where a wing window runs into the SW face (until the wing is set back)
+    window_jambs(G, SW)
 
-    # --- chimney stack at the south face's east end
-    x0, x1 = EAST_X, EAST_X + CHIMNEY_W
-    y0, y1 = front_y + 0.12, max(front_y + 0.6, block_y - 0.02)
-    G.box("Tower_chimney", x0, y0, Z_BASE, x1, y1, TOP - 0.02, "stucco", "House")
-    G.box("Tower_chimney_cap", x0 - 0.05, y0 - 0.05, TOP - 0.02, x1 + 0.05, y1, TOP + 0.1,
-          "stucco", "House")
-    G.box("Tower_chimney_flue", x0 + 0.08, y0 + 0.1, TOP + 0.1, x1 - 0.08, y0 + 0.42, TOP + 0.22,
-          "stucco", "House")
-
-    # share the new footprint with modules that run later (same dict objects as the build script's)
-    G.TOWER.update(x0=V1[0], x1=EAST_X, y0=front_y, y1=V4[1], top=TOP)
-    G.BULKHEAD.update(x0=WEST_X, x1=EAST_X, y0=V4[1], y1=rear_y, top=TOP)
+    # --- chimney: shaft, crown band in line with the tower band, flue up to TOP (frames 05, 06, 14)
+    x0, x1 = east_x, east_x + CHIMNEY_W
+    y0, y1 = front_y - CHIMNEY_FRONT, front_y + 0.2
+    c0, c1, co = CHIMNEY_CAP
+    G.box("Tower_chimney", x0, y0, Z_BASE, x1, y1, c0, "stucco", "House")
+    G.box("Tower_chimney_cap", x0 - co, y0 - co, c0, x1 + co, y1, c1, "stucco", "House")
+    fx = (x0 + x1 - CHIMNEY_FLUE) / 2
+    G.box("Tower_chimney_flue", fx, y0 + 0.04, c1, fx + CHIMNEY_FLUE, y0 + 0.36, TOP, "stucco", "House")
 
     # review cameras for this area (frame each one is matched to in the comment)
+    pc = world(SW, sc, BOARD_T, 0.0)
+    dn, nn = frame_of(SW)
+    at = lambda out, along, z: (pc[0] + nn[0] * out + dn[0] * along,   # noqa: E731
+                                pc[1] + nn[1] * out + dn[1] * along, z)
+    mid_y = (front_y + rear_y) / 2
+    door_y = EAST["a"][1] + d1 - DOOR_W / 2
     G.SHOTS.update({
-        "tower_close": ((5.6, 3.3, 4.6), (5.75, 6.3, 7.6), 20),          # exterior/04
-        "tower_street": ((6.2, -15.5, 1.7), (7.0, 6.5, 6.9), 70),       # exterior/06 (crop)
-        "tower_sw": ((0.5, -29.0, 16.5), (7.3, 8.0, 7.4), 75),         # exterior/22 (crop)
-        "bulkhead_roof": ((11.8, 7.3, 12.5), (9.0, 17.0, 6.5), 18),     # exterior/20
-        "tower_top": ((7.6, 10.2, 32.0), (7.6, 10.2, 0.0), 45),         # exterior/15 (rotated crop)
-        "tower_rear": ((1.0, 24.0, 15.0), (7.0, 10.0, 7.5), 40),        # junction check (no frame)
-        "porthole_detail": ((3.9, 4.0, 5.1), (5.75, 6.15, 5.6), 50),    # exterior/04 (porthole crop)
-        "bulkhead_door": ((12.5, 10.0, 8.0), (8.9, 12.3, 7.3), 30),     # exterior/20 (door crop)
+        "tower_close": (at(2.4, 0.7, 4.3), at(0.0, -0.5, 7.0), 20),       # exterior/04
+        "porthole_detail": (at(2.8, 0.1, 5.1), at(0.0, 0.0, 5.6), 50),   # exterior/04 (porthole crop)
+        "tower_street": ((6.2, -15.5, 1.7), (7.2, front_y + 1.0, 6.9), 70),   # exterior/06 (crop)
+        "tower_sw": (at(18.0, 10.0, 13.0), at(0.0, 0.3, 6.6), 60),       # exterior/22 (from SSW; Palm_0 blocks the face-on view)
+        "bulkhead_roof": ((10.6, front_y + 1.6, 10.2), (9.6, rear_y + 2.0, 7.0), 20),   # exterior/20
+        "tower_top": ((7.8, mid_y, 32.0), (7.8, mid_y, 0.0), 45),         # exterior/15 (rotated crop)
+        "tower_rear": ((1.0, 24.0, 15.0), (7.0, 10.0, 7.5), 40),          # junction check (no frame)
+        "tower_base": (at(4.5, 2.5, 7.5), at(0.0, 1.6, 4.2), 28),         # roof flashing check (no frame)
+        "bulkhead_door": ((12.5, door_y - 2.3, 8.0), (east_x, door_y, 7.3), 30),   # exterior/20 (door)
     })
 
 
 def house_fronts(G):
-    """Front wall planes (min y) of the hip-roof wing and of the roof-deck block, as built so far."""
-    def front(name):
-        o = G.bpy.data.objects.get(name)
-        if o is None or o.type != "MESH" or not o.data.vertices:
-            return G.HOUSE["y0"]
-        return min((o.matrix_world @ v.co).y for v in o.data.vertices)
+    """Upper-storey front wall planes (min y above the front projection) of the hip-roof wing and of
+    the roof-deck block, so a wing whose upper storey is set back is measured at that storey."""
+    def front(prefix):
+        return min(((o.matrix_world @ v.co).y for o in G.bpy.data.objects
+                    if o.name.startswith(prefix) and o.type == "MESH"
+                    for v in o.data.vertices if (o.matrix_world @ v.co).z > Z_BASE + 0.5),
+                   default=G.HOUSE["y0"])
     return front("House_left_wing"), front("House_right_block")
 
 
 # ======================================================================= materials
 def materials(G):
     bpy = G.bpy
-    G.mat("tower_backing", (0.006, 0.006, 0.006), 0.95)
-    G.mat("tower_cap", (0.08, 0.072, 0.064), 0.5, 0.3)     # weathered dark-bronze flashing (frame 04)
-    G.mat("bulkhead_membrane", (0.56, 0.56, 0.54), 0.8)      # light grey TPO roof (frame 20)
-    G.mat("tower_porthole_glass", (0.16, 0.17, 0.18), 0.04, 0.7)  # mirror-like, shows sky (04, 22)
-    G.mat("tower_reveal", (0.62, 0.62, 0.6), 0.6)                 # painted porthole sleeve (04)
-    G.mat("bulkhead_door_leaf", (0.8, 0.8, 0.78), 0.45)           # white painted door (frame 20)
+    G.mat("tower_backing", (0.006, 0.006, 0.006), 0.95)       # also the boards' end grain / gaps
+    G.mat("tower_band", (0.06, 0.051, 0.043), 0.62, 0.15)      # weathered bronze-grey band (frame 04)
+    G.mat("bulkhead_membrane", (0.56, 0.56, 0.54), 0.8)        # light grey TPO roof (frame 20)
+    G.mat("tower_porthole_glass", (0.60, 0.61, 0.62), 0.06, 0.5)    # pale, mirrors sky (04, 05, 22)
+    G.mat("tower_reveal", (0.50, 0.48, 0.44), 0.6)             # painted porthole sleeve (frame 04)
+    G.mat("tower_window_glass", (0.16, 0.14, 0.11), 0.04,       # glass over a lit, warm-white stair
+          emit=((1.0, 0.8, 0.55), 0.11))                        # (frame 05 day sliver, 06 dusk glow)
+    G.mat("bulkhead_door_leaf", (0.8, 0.8, 0.78), 0.45)        # white painted door (frame 20)
+    for name, spec in (("tower_porthole_glass", 0.8), ("tower_window_glass", 0.9)):
+        G.MAT[name].node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = spec
     if "tower_cladding" in G.MAT:
         return G.MAT
     alb, nrm = charred_maps(bpy, os.path.join(G.TEX_DIR, "black_oak_veneer", "diff.jpg"))
@@ -259,11 +290,11 @@ def materials(G):
     ln.new(a.outputs["Color"], bsdf.inputs["Base Color"])
     nn = img_node("tower_cladding_normal", nrm, False)
     nm = n.new("ShaderNodeNormalMap")
-    nm.inputs["Strength"].default_value = 0.8
+    nm.inputs["Strength"].default_value = 0.35     # grain reads as tone, not embossed relief
     ln.new(nn.outputs["Color"], nm.inputs["Color"])
     ln.new(nm.outputs["Normal"], bsdf.inputs["Normal"])
-    bsdf.inputs["Roughness"].default_value = 0.55          # soft sheen of oiled, brushed char
-    bsdf.inputs["Specular IOR Level"].default_value = 0.55
+    bsdf.inputs["Roughness"].default_value = 0.7           # matte brushed char, faint sheen
+    bsdf.inputs["Specular IOR Level"].default_value = 0.38
     G.MAT["tower_cladding"] = m
     return G.MAT
 
@@ -287,7 +318,7 @@ def growth_rings(seed=5):
     """Flat-sawn growth rings: rows = across a board (TEX_STRIPS strips), cols = along the grain.
 
     Each strip is a board cut from a log whose pith wanders slowly below the face, so ring contours
-    form the long cathedral arches seen in frame 04.
+    form the long cathedral arches seen in frame 04; latewood lines are thin and dark.
     """
     sh = TEX_H // TEX_STRIPS
     board_m = BOARD_PITCH * sh / (sh - 2 * TEX_MARGIN)
@@ -295,13 +326,13 @@ def growth_rings(seed=5):
     out = np.zeros((TEX_H, TEX_W), np.float32)
     for k in range(TEX_STRIPS):
         r2 = np.random.default_rng(seed * 100 + k)
-        sp = r2.uniform(0.008, 0.012)                              # ring spacing
+        sp = r2.uniform(0.012, 0.022)                              # ring spacing
         s0 = r2.uniform(-0.07, 0.07) + 0.025 * value_noise((1, TEX_W), (1, 3), r2)[0]
         d = 0.02 + r2.uniform(0.0, 0.05) + 0.06 * np.abs(value_noise((1, TEX_W), (1, 4), r2)[0])
         warp = 0.003 * value_noise((sh, TEX_W), (2, 14), r2) + 0.0008 * value_noise((sh, TEX_W), (6, 90), r2)
         r = np.sqrt(d[None, :] ** 2 + (s[:, None] - s0[None, :]) ** 2) + warp
         f = (r / sp) % 1.0
-        width = 0.16 + 0.06 * value_noise((sh, TEX_W), (2, 12), r2)
+        width = np.clip(0.09 + 0.03 * value_noise((sh, TEX_W), (2, 12), r2), 0.04, None)
         out[k * sh:(k + 1) * sh] = np.exp(-((f - 0.5) / width) ** 2)
     return out
 
@@ -320,7 +351,7 @@ def charred_maps(bpy, veneer_path):
             im.pixels.foreach_get(px)
             lum = px.reshape(h, w, 4)[:TEX_H, :TEX_W, :3] @ np.array([0.3, 0.5, 0.2], np.float32)
             detail = np.clip((lum - lum.mean()) / (lum.std() + 1e-6), -2.5, 2.5)
-    shade = (1 + 0.12 * blot) * (1 - 0.55 * rings) * (1 + 0.10 * detail)
+    shade = (1 + 0.12 * blot) * (1 - 0.7 * rings) * (1 + 0.10 * detail)
     alb_lin = np.clip(np.array(CHAR_RGB, np.float32)[None, None] * shade[..., None], 0, 1)
     alb = np.where(alb_lin <= 0.0031308, alb_lin * 12.92, 1.055 * alb_lin ** (1 / 2.4) - 0.055)
     height = 0.7 * (1 - rings) + 0.12 * detail      # latewood rings stand proud after brushing
@@ -363,10 +394,10 @@ def wall_grid(target, f, z0, z1, holes):
             faces.append((b, b + 1, b + 2, b + 3))
 
 
-def miter_ext(faces_info, k0, k1):
+def miter_ext(f0, f1):
     """Extra length the outer board face needs to meet the neighbouring clad face at a convex corner."""
-    d0, _ = frame_of(faces_info[k0])
-    d1, _ = frame_of(faces_info[k1])
+    d0, _ = frame_of(f0)
+    d1, _ = frame_of(f1)
     cross = d0[0] * d1[1] - d0[1] * d1[0]
     if cross <= 0:     # only a left turn on a CCW outline is a convex corner
         return 0.0
@@ -374,36 +405,38 @@ def miter_ext(faces_info, k0, k1):
     return BOARD_T * math.tan(turn / 2)
 
 
-def boards_on_face(verts, faces, uvs, f, rnd, circle=None, rect=None):
-    """Vertical boards with butt joints; circle (sc, zc, r) / rect (s0, s1, z0, z1) are cut out."""
+def boards_on_face(verts, faces, uvs, mats, f, rnd, circle=None, rect=None):
+    """Vertical boards, about half with one butt joint; circle (sc, zc, r) / rect (s0, s1, z0, z1)
+    are cut out."""
     L = f["L"]
     n = max(1, round(L / BOARD_PITCH))
     p = L / n
     z_lo = f["z0"] + 0.02
-    z_hi = TOP - 0.06
+    z_hi = TOP - 0.006            # up under the white top's lip; the band sits over the boards
     holes_z = []
     if circle:
         holes_z.append((circle[1] - circle[2] - 0.15, circle[1] + circle[2] + 0.15))
     if rect:
         holes_z.append((rect[2] - 0.15, rect[3] + 0.15))
+    holes_z.append((BAND_Z[0] - 0.1, BAND_Z[1] + 0.1))   # a joint under the band would be wasted
     for c in range(n):
         s0 = c * p + (0 if c == 0 else BOARD_GAP / 2)
         s1 = (c + 1) * p - (0 if c == n - 1 else BOARD_GAP / 2)
         e0 = f.get("ext0", 0.0) if c == 0 else 0.0
         e1 = f.get("ext1", 0.0) if c == n - 1 else 0.0
-        # butt joints: staggered, kept out of the opening zone
         H = z_hi - z_lo
-        nseg = max(1, math.ceil(H / SEG_MAX))
+        nseg = 1 if rnd.random() < JOINT_SKIP else max(1, math.ceil(H / SEG_MAX))
         cuts = []
         for k in range(1, nseg):
-            zc = z_lo + H * k / nseg + rnd.uniform(-0.45, 0.45) * (H / nseg - 0.6) / max(H / nseg, 1e-3)
+            zc = z_lo + H * k / nseg + rnd.uniform(-0.45, 0.45) * (H / nseg - 0.6)
             for lo, hi in holes_z:
                 if lo < zc < hi:
                     zc = lo if zc - lo < hi - zc else hi
             cuts.append(zc)
         zs = [z_lo] + sorted(cuts) + [z_hi]
         for k in range(len(zs) - 1):
-            za, zb = zs[k] + (0.002 if k else 0), zs[k + 1] - (0.002 if k < len(zs) - 2 else 0)
+            za = zs[k] + (JOINT_GAP if k else 0)
+            zb = zs[k + 1] - (JOINT_GAP if k < len(zs) - 2 else 0)
             if zb - za < 0.05:
                 continue
             pieces = cut_piece(s0, s1, za, zb, circle, rect)
@@ -412,7 +445,7 @@ def boards_on_face(verts, faces, uvs, f, rnd, circle=None, rect=None):
             strip = rnd.randrange(TEX_STRIPS)
             depth = BOARD_T + rnd.uniform(-0.0015, 0.0015)
             for ss, bot, top in pieces:
-                board_piece(verts, faces, uvs, f, ss, bot, top, depth, e0, e1, s0, s1, za, u0, strip)
+                board_piece(verts, faces, uvs, mats, f, ss, bot, top, depth, e0, e1, s0, s1, za, u0, strip)
 
 
 def cut_piece(s0, s1, za, zb, circle, rect):
@@ -441,8 +474,9 @@ def cut_piece(s0, s1, za, zb, circle, rect):
     return [([s0, s1], [za, za], [zb, zb])]
 
 
-def board_piece(verts, faces, uvs, f, ss, bot, top, depth, e0, e1, bs0, bs1, za, u0, strip):
-    """Board strip with front, end and side faces (back face omitted: it sits on the backing)."""
+def board_piece(verts, faces, uvs, mats, f, ss, bot, top, depth, e0, e1, bs0, bs1, za, u0, strip):
+    """Board strip with front, end and side faces (back face omitted: it sits on the backing).
+    End faces (joints, cuts) get material slot 1 so joints read as dark hairlines."""
     K = len(ss)
     so = list(ss)
     if e0:
@@ -455,11 +489,12 @@ def board_piece(verts, faces, uvs, f, ss, bot, top, depth, e0, e1, bs0, bs1, za,
         v = (strip * strip_h + TEX_MARGIN + (strip_h - 2 * TEX_MARGIN) * (s - bs0) / (bs1 - bs0)) / TEX_H
         return (u0 + (z - za) / TEX_ALONG, v)
 
-    def quad(pts, uvq):
+    def quad(pts, uvq, m=0):
         b = len(verts)
         verts.extend(pts)
         faces.append((b, b + 1, b + 2, b + 3))
         uvs.extend(uvq)
+        mats.append(m)
 
     # end and side faces map a thin, non-degenerate strip (board thickness) so tangents stay valid
     for k in range(K - 1):
@@ -471,12 +506,12 @@ def board_piece(verts, faces, uvs, f, ss, bot, top, depth, e0, e1, bs0, bs1, za,
         quad([world(f, ss[k], 0, bot[k]), world(f, ss[k + 1], 0, bot[k + 1]),
               world(f, so[k + 1], depth, bot[k + 1]), world(f, so[k], depth, bot[k])],
              [uv(ss[k], bot[k] - depth), uv(ss[k + 1], bot[k + 1] - depth),
-              uv(ss[k + 1], bot[k + 1]), uv(ss[k], bot[k])])
+              uv(ss[k + 1], bot[k + 1]), uv(ss[k], bot[k])], 1)
         # top end
         quad([world(f, so[k], depth, top[k]), world(f, so[k + 1], depth, top[k + 1]),
               world(f, ss[k + 1], 0, top[k + 1]), world(f, ss[k], 0, top[k])],
              [uv(ss[k], top[k]), uv(ss[k + 1], top[k + 1]),
-              uv(ss[k + 1], top[k + 1] + depth), uv(ss[k], top[k] + depth)])
+              uv(ss[k + 1], top[k + 1] + depth), uv(ss[k], top[k] + depth)], 1)
     # sides
     i0, i1 = bs0 + depth, bs1 - depth      # texture coordinate just inside the board's strip
     quad([world(f, ss[0], 0, bot[0]), world(f, so[0], depth, bot[0]),
@@ -515,9 +550,12 @@ def miter_vectors(pts, closed):
     return out
 
 
-def sweep(path, closed, profile):
-    """Sweep a 2D (outward offset, z) profile along a path with mitred corners."""
-    mit = miter_vectors(path, closed)
+def sweep(path, profile, closed=False, prev=None, nxt=None):
+    """Sweep a 2D (outward offset, z) profile along a path with mitred corners. For an open path,
+    prev / nxt are the outline's neighbouring points, so the end cuts are mitred against them."""
+    ext = ([prev] if prev else []) + list(path) + ([nxt] if nxt else [])
+    mit = miter_vectors(ext, closed)
+    mit = mit[1 if prev else 0:len(mit) - (1 if nxt else 0)]
     verts = [(x + mx * o, y + my * o, z) for (x, y), (mx, my) in zip(path, mit) for o, z in profile]
     P, n = len(profile), len(path)
     faces = []
@@ -538,42 +576,38 @@ def smooth_by_angle(obj, deg):
     me.set_sharp_from_angle(angle=math.radians(deg))
 
 
-def ring_mesh(f, sc, zc, r0, r1, out0, out1, seg=48):
-    """Annulus (out0 == out1) or tube (r0 == r1) on a face's local frame around (sc, zc)."""
+def revolve(f, sc, zc, profile, seg=48):
+    """Surface of revolution about the axis through (sc, zc) normal to face f; profile = [(r, out)]."""
     verts, faces = [], []
+    P = len(profile)
     for k in range(seg):
         a = 2 * math.pi * k / seg
         c, s = math.cos(a), math.sin(a)
-        verts.append(world(f, sc + r0 * c, out0, zc + r0 * s))
-        verts.append(world(f, sc + r1 * c, out1, zc + r1 * s))
+        verts += [world(f, sc + r * c, out, zc + r * s) for r, out in profile]
     for k in range(seg):
-        a0, b0 = 2 * k, 2 * k + 1
-        a1, b1 = 2 * ((k + 1) % seg), 2 * ((k + 1) % seg) + 1
-        faces.append((a0, a1, b1, b0))
+        k2 = (k + 1) % seg
+        for j in range(P - 1):
+            faces.append((k * P + j, k2 * P + j, k2 * P + j + 1, k * P + j + 1))
     return verts, faces
 
 
 def porthole(G, f, sc):
     zc = PORTHOLE_Z
-    front = BOARD_T + RING_PROUD
-    ring_front = ring_mesh(f, sc, zc, PORTHOLE_R_OUT, PORTHOLE_R_IN, front, front)
-    ring_side = ring_mesh(f, sc, zc, PORTHOLE_R_OUT, PORTHOLE_R_OUT, -0.002, front)
-    ring_lip = ring_mesh(f, sc, zc, PORTHOLE_R_IN, PORTHOLE_R_IN, front, front - 0.05)
-    verts, faces = [], []
-    for v, fa in (ring_front, ring_side, ring_lip):
-        b = len(verts)
-        verts += v
-        faces += [tuple(i + b for i in q) for q in fa]
-    smooth_by_angle(G.mesh("Tower_porthole_frame", verts, faces, "frame_black", "House"), 30)
-    # deep reveal sleeve behind the black ring is light (catches the sun in frame 04)
-    v, fa = ring_mesh(f, sc, zc, PORTHOLE_R_IN, PORTHOLE_R_IN, front - 0.05, -PORTHOLE_DEPTH)
+    rc = PORTHOLE_R_OUT - BEAD_R
+    # half-torus bead on the board face, plus a skirt back to the backing behind its outer edge
+    prof = [(rc + BEAD_R * math.cos(t), BOARD_T + BEAD_R * math.sin(t))
+            for t in (math.pi * (1 - i / 8) for i in range(9))]
+    prof += [(PORTHOLE_R_OUT, -0.002)]
+    v, fa = revolve(f, sc, zc, prof)
+    smooth_by_angle(G.mesh("Tower_porthole_frame", v, fa, "frame_black", "House"), 50)
+    # light reveal sleeve from the bead's inner edge back to the glass
+    v, fa = revolve(f, sc, zc, [(PORTHOLE_R_IN, BOARD_T), (PORTHOLE_R_IN, -PORTHOLE_DEPTH)])
     smooth_by_angle(G.mesh("Tower_porthole_reveal", v, fa, "tower_reveal", "House"), 30)
-    # glass disc at the back of the reveal
     seg = 48
     gv = [world(f, sc + PORTHOLE_R_IN * math.cos(2 * math.pi * k / seg), -PORTHOLE_DEPTH,
                 zc + PORTHOLE_R_IN * math.sin(2 * math.pi * k / seg)) for k in range(seg)]
     G.mesh("Tower_porthole_glass", gv, [tuple(range(seg))], "tower_porthole_glass", "House")
-    # flange: closes the square hole in the backing around the ring (only seen through board gaps)
+    # flange: closes the square hole in the backing around the bead (only seen through board gaps)
     fv, ff = [], []
     R = PORTHOLE_R_OUT
     for k in range(seg):
@@ -589,7 +623,7 @@ def porthole(G, f, sc):
     G.mesh("Tower_porthole_flange", fv, ff, "tower_backing", "House")
 
 
-def rect_opening(G, name, f, rect, front, back, fw, pane="glass"):
+def rect_opening(G, name, f, rect, front, back, fw, pane="glass", handle=False):
     """Black frame (proud of the wall) with jambs back to a recessed pane (glass, or a door leaf)."""
     s0, s1, z0, z1 = rect
     verts, faces = [], []
@@ -613,16 +647,107 @@ def rect_opening(G, name, f, rect, front, back, fw, pane="glass"):
     quad([W(o1, q0, -0.002), W(o1, q1, -0.002), W(o1, q1), W(o1, q0)])
     quad([W(o1, q1, -0.002), W(o0, q1, -0.002), W(o0, q1), W(o1, q1)])
     quad([W(o0, q1, -0.002), W(o0, q0, -0.002), W(o0, q0), W(o0, q1)])
-    # jambs from the frame's inner edge back to the glass
+    # jambs from the frame's inner edge back to the pane
     quad([W(i0, j0), W(i1, j0), W(i1, j0, back), W(i0, j0, back)])
     quad([W(i1, j0), W(i1, j1), W(i1, j1, back), W(i1, j0, back)])
     quad([W(i1, j1), W(i0, j1), W(i0, j1, back), W(i1, j1, back)])
     quad([W(i0, j1), W(i0, j0), W(i0, j0, back), W(i0, j1, back)])
-    if pane != "glass":   # black lever handle on a door leaf
+    if handle:   # black lever handle on a door leaf
         hs, hz = i1 - 0.07, z0 + 1.0
         quad([W(hs - 0.13, hz, back + 0.05), W(hs, hz, back + 0.05),
               W(hs, hz + 0.025, back + 0.05), W(hs - 0.13, hz + 0.025, back + 0.05)])
     G.mesh(name + "_frame", verts, faces, "frame_black", "House")
-    G.mesh(name + ("_glass" if pane == "glass" else "_leaf"),
+    G.mesh(name + ("_leaf" if handle else "_glass"),
            [W(i0, j0, back), W(i1, j0, back), W(i1, j1, back), W(i0, j1, back)],
            [(0, 1, 2, 3)], pane, "House")
+
+
+# ======================================================================= roof flashing
+def roof_line(G, f):
+    """Height of the roof surface just outside wall face f, sampled along it ([(s, z | None)]).
+    Only metal roofs / the flat front-projection roof count; vegetation etc. is looked through."""
+    bpy, V = G.bpy, G.Vector
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    scene = bpy.context.scene
+    base = BOARD_T if f["clad"] else 0.0
+    s_a, s_b = -f.get("ext0", 0.0), f["L"] + f.get("ext1", 0.0)
+    n = max(2, round((s_b - s_a) / FLASH_STEP))
+    out = []
+    for k in range(n + 1):
+        s = s_a + (s_b - s_a) * k / n
+        x, y, _ = world(f, min(max(s, 0.01), f["L"] - 0.01), base + 0.04, 0.0)
+        origin, h = V((x, y, TOP - 0.4)), None
+        for _ in range(8):
+            hit, loc, _nrm, _i, obj, _m = scene.ray_cast(dg, origin, V((0.0, 0.0, -1.0)), distance=TOP)
+            if not hit:
+                break
+            if obj.name.startswith(ROOF_TARGETS):
+                h = loc.z
+                break
+            if obj.name.startswith(RAY_STOP):
+                break
+            origin = loc + V((0.0, 0.0, -0.002))
+        out.append((s, h if h is not None and h > f["z0"] - 0.05 else None))
+    return out
+
+
+def flashing(G, lines):
+    """Dark metal upstand along each roof/wall junction: runs of samples, split where the roof
+    height jumps (an eave edge) so no strip bridges two roofs."""
+    verts, faces = [], []
+    for f, samples in lines:
+        base = BOARD_T if f["clad"] else 0.0
+        prof = [(base + 0.006, -0.03), (base + 0.006, FLASH_H), (base - 0.004, FLASH_H + 0.01)]
+        runs, cur = [], []
+        for s, h in samples:
+            if h is None or (cur and abs(h - cur[-1][1]) > 0.2):
+                if len(cur) > 1:
+                    runs.append(cur)
+                cur = [] if h is None else [(s, h)]
+            else:
+                cur.append((s, h))
+        if len(cur) > 1:
+            runs.append(cur)
+        for run in runs:
+            b = len(verts)
+            verts += [world(f, s, o, h + dz) for s, h in run for o, dz in prof]
+            P = len(prof)
+            for i in range(len(run) - 1):
+                for j in range(P - 1):
+                    faces.append((b + i * P + j, b + (i + 1) * P + j, b + (i + 1) * P + j + 1, b + i * P + j + 1))
+    if faces:
+        G.mesh("Tower_flashing", verts, faces, "roof_metal", "House")
+
+
+def window_jambs(G, f):
+    """Facade windows (glass on another owner's wall) that run into the SW face get a black jamb on
+    the board face where the glass disappears, so the glass ends in a frame, not in the boards."""
+    d, n = frame_of(f)
+    verts, faces = [], []
+    for o in G.bpy.data.objects:
+        if o.type != "MESH" or o.name.startswith(("Tower", "Bulkhead")) or not o.data.materials \
+                or o.data.materials[0].name != "glass":
+            continue
+        pts = [o.matrix_world @ v.co for v in o.data.vertices]
+        x0, x1 = min(p.x for p in pts), max(p.x for p in pts)
+        y0, y1 = min(p.y for p in pts), max(p.y for p in pts)
+        z0, z1 = min(p.z for p in pts), max(p.z for p in pts)
+        if y1 - y0 > 0.2 or z1 < f["z0"] or z0 > TOP:
+            continue
+        # where the glass's front plane (y0) crosses the board face: (p - a).n = BOARD_T
+        if abs(n[0]) < 1e-6:
+            continue
+        x = f["a"][0] + (BOARD_T - (y0 - f["a"][1]) * n[1]) / n[0]
+        s = (x - f["a"][0]) * d[0] + (y0 - f["a"][1]) * d[1]
+        if not (x0 < x < x1 and -0.05 < s < f["L"]):
+            continue
+        b = len(verts)
+        for ss in (s - 0.035, s + 0.035):
+            for o_ in (0.0, BOARD_T + 0.03):
+                verts += [world(f, ss, o_, z0 - 0.06), world(f, ss, o_, z1 + 0.06)]
+        # vertex order: (s-, in, bot/top), (s-, out, bot/top), (s+, in, ..), (s+, out, ..)
+        faces += [(b + 2, b + 6, b + 7, b + 3), (b + 0, b + 2, b + 3, b + 1), (b + 6, b + 4, b + 5, b + 7),
+                  (b + 1, b + 3, b + 7, b + 5), (b + 0, b + 4, b + 6, b + 2)]
+    if faces:
+        G.mesh("Tower_wing_window_jamb", verts, faces, "frame_black", "House")
